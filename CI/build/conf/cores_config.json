@@ -46,7 +46,6 @@
             "BLUEPILL_F103C6",
             "BLUEPILL_F103C8",
             "BLUEPILL_F103C8B",
-            "BLACKPILL_F303CC",
             "DIYMROE_F407VGT",
             "EEXTR_F030_V1",
             "HY_TinySTM103TB",
@@ -100,7 +99,6 @@
           "applicable": true,
           "boards": [
             "BLUEPILL_F103C8",
-            "BLACKPILL_F303CC",
             "BLACK_F407VE",
             "MAPLEMINI_F103CB",
             "NUCLEO_F207ZG",
@@ -126,7 +124,6 @@
             "BLUEPILL_F103C6",
             "BLUEPILL_F103C8",
             "BLUEPILL_F103C8B",
-            "BLACKPILL_F303CC",
             "BLUE_F407VE_Mini",
             "DIYMROE_F407VGT",
             "EEXTR_F030_V1",
@@ -184,11 +181,6 @@
           "pattern": "(Alarm)?TimedWak(e)?up|SerialDeepSleep",
           "applicable": false,
           "boards": [ "EEXTR_F030_V1", "MALYANM200_F103CB" ]
-        },
-        {
-          "pattern": "ArduinoISP",
-          "applicable": true,
-          "boards": [ "" ]
         }
       ]
     },
