@@ -106,11 +106,11 @@ extern "C" {
 #define TIMER_SERVO             TIM2  //TODO: advanced-control timers don't work
 
 // UART Definitions
-#define SERIAL_UART_INSTANCE    1 //Connected to ST-Link
+#define SERIAL_UART_INSTANCE    2 //Connected to ST-Link
 // Default pin used for 'Serial' instance (ex: ST-Link)
 // Mandatory for Firmata
-#define PIN_SERIAL_RX           PA10
-#define PIN_SERIAL_TX           PA9
+#define PIN_SERIAL_RX           0
+#define PIN_SERIAL_TX           1
 
 #ifdef __cplusplus
 } // extern "C"
