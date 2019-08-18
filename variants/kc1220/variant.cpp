@@ -161,8 +161,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Configure the Systick interrupt time 
-  */
+    HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_HSE, RCC_MCODIV_1);
+  
   __HAL_RCC_PLLI2S_ENABLE();
 }
 
