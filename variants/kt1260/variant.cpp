@@ -23,73 +23,91 @@ extern "C"
 {
 #endif
 #ifdef BUILD_NUMBER
-const int build=BUILD_NUMBER;
+  const int build = BUILD_NUMBER;
 #else
-const int build=0;
+const int build = 0;
 #endif
-int uptime;
-
+  int uptime;
+  int atemp_init, atemp, avref; //芯片温度,基准电压
   // Pin number
   const PinName digitalPin[] = {
-      PA_3,  //D0
+      PA_0,  //D46/A0
+      PA_1,  //D47/A1
       PA_2,  //D1
-      PA_10, //D2
-      PB_3,  //D3
-      PB_5,  //D4
-      PB_4,  //D5
-      PB_10, //D6
+      PA_3,  //D0
+      PA_4,  //D48/A2
+      PA_5,  //D13 - LED
+      PA_6,  //D12
+      PA_7,  //D11
       PA_8,  //D7
       PA_9,  //D8
-      PC_7,  //D9
-      PB_6,  //D10
-      PA_7,  //D11
-      PA_6,  //D12
-      PA_5,  //D13 - LED
-      PB_9,  //D14
-      PB_8,  //D15
-      // ST Morpho
-      // CN7 Left Side
-      PC_10, //D16
-      PC_12, //D17
-      NC,    //D18 - BOOT0
+      PA_10, //D2
+      PA_11, //D37
+      PA_12, //D36
       PA_13, //D19 - SWD
       PA_14, //D20 - SWD
       PA_15, //D21
+      PB_0,  //D49/A3
+      PB_1,  //D41
+      PB_2,  //D40
+      PB_3,  //D3
+      PB_4,  //D5
+      PB_5,  //D4
+      PB_6,  //D10
       PB_7,  //D22
+      PB_8,  //D15
+      PB_9,  //D14
+      PB_10, //D6
+      PB_11, //D39
+      PB_12, //D38
+      PB_13, //D44
+      PB_14, //D43
+      PB_15, //D42
+      PC_0,  //D51/A5
+      PC_1,  //D50/A4
+      PC_2,  //D28
+      PC_3,  //D29
+      PC_4,  //D45
+      PC_5,  //D35
+      PC_6,  //D34
+      PC_7,  //D9
+      PC_8,  //D33
+      PC_9,  //D32
+      PC_10, //D16
+      PC_11, //D30
+      PC_12, //D17
       PC_13, //D23
       PC_14, //D24
       PC_15, //D25
       PD_0,  //D26
       PD_1,  //D27
-      PC_2,  //D28
-      PC_3,  //D29
-      // CN7 Right Side
-      PC_11, //D30
       PD_2,  //D31
-      // CN10 Left Side
-      PC_9, //D32
-      // CN10 Right side
-      PC_8,  //D33
-      PC_6,  //D34
-      PC_5,  //D35
-      PA_12, //D36
-      PA_11, //D37
-      PB_12, //D38
-      PB_11, //D39
-      PB_2,  //D40
-      PB_1,  //D41
-      PB_15, //D42
-      PB_14, //D43
-      PB_13, //D44
-      PC_4,  //D45
-      PA_0,  //D46/A0
-      PA_1,  //D47/A1
-      PA_4,  //D48/A2
-      PB_0,  //D49/A3
-      PC_1,  //D50/A4
-      PC_0,  //D51/A5
+      PD_3,  //D26
+      PD_4,  //D27
+      PD_5,  //D31
+      PD_6,  //D26
+      PD_7,  //D27
+      PD_8,  //D31
+      PD_9,  //D26
+      PD_10, //D27
+      PD_11, //D31
+      PD_12, //D26
+      PD_13, //D27
+      PD_14, //D31
+      PD_15,
       // Duplicated pins in order to be aligned with PinMap_ADC
-      PE_11};
+      PE_0,
+      PE_1,
+      PE_2,
+      PE_3,
+      PE_4,
+      PE_5,
+      PE_6,
+      PE_11,
+      PE_12,
+      PE_13,
+      PE_14,
+      PE_15};
 
 #ifdef __cplusplus
 }

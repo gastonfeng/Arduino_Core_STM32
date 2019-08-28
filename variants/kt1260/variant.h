@@ -25,92 +25,94 @@ extern "C"
 #endif // __cplusplus
 extern const int build;
 extern int uptime;
+extern int atemp_init,atemp,avref;   //芯片温度,基准电压
+
 
   /*----------------------------------------------------------------------------
  *        Pins
  *----------------------------------------------------------------------------*/
-#define PA0 46 // A0
-#define PA1 47 // A1
-#define PA2 1
-#define PA3 0
-#define PA4 48 // A2
-#define PA5 13 // A8 - LED
-#define PA6 12 // A7
-#define PA7 11 // A6
-#define PA8 7
-#define PA9 8
-#define PA10 2
-#define PA11 37
-#define PA12 36
-#define PA13 19 // SWD
-#define PA14 20 // SWD
-#define PA15 21
+#define PA0 0 // A0
+#define PA1 1 // A1
+#define PA2 2
+#define PA3 3
+#define PA4 4 // A2
+#define PA5 5 // A8 - LED
+#define PA6 6 // A7
+#define PA7 7 // A6
+#define PA8 8
+#define PA9 9
+#define PA10 10
+#define PA11 11
+#define PA12 12
+#define PA13 13 // SWD
+#define PA14 14 // SWD
+#define PA15 15
 
-#define PB0 49 // A3
-#define PB1 41 // A11
-#define PB2 40
-#define PB3 3
-#define PB4 5
-#define PB5 4
-#define PB6 10
-#define PB7 22
-#define PB8 15
-#define PB9 14
-#define PB10 6
-#define PB11 39
-#define PB12 38
-#define PB13 44
-#define PB14 43
-#define PB15 42
+#define PB0 16 // A3
+#define PB1 17 // A11
+#define PB2 18
+#define PB3 19
+#define PB4 20
+#define PB5 21
+#define PB6 22
+#define PB7 23
+#define PB8 24
+#define PB9 25
+#define PB10 26
+#define PB11 27
+#define PB12 28
+#define PB13 29
+#define PB14 30
+#define PB15 31
 
-#define PC0 51 // A5
-#define PC1 50 // A4
-#define PC2 28 // A9
-#define PC3 29 // A10
-#define PC4 45 // A12
-#define PC5 35 // A13
-#define PC6 34
-#define PC7 9
-#define PC8 33
-#define PC9 32
-#define PC10 16
-#define PC11 30
-#define PC12 17
-#define PC13 23
-#define PC14 24
-#define PC15 25
+#define PC0 32 // A5
+#define PC1 33 // A4
+#define PC2 34 // A9
+#define PC3 35 // A10
+#define PC4 36 // A12
+#define PC5 37 // A13
+#define PC6 38
+#define PC7 39
+#define PC8 40
+#define PC9 41
+#define PC10 42
+#define PC11 43
+#define PC12 44
+#define PC13 45
+#define PC14 46
+#define PC15 47
 
-#define PD0 26
-#define PD1 27
-#define PD2 31
-#define PD3 52
+#define PD0 48
+#define PD1 49
+#define PD2 50
+#define PD3 51
 #define PD4 52
-#define PD5 52
-#define PD6 26
-#define PD7 27
-#define PD8 31
-#define PD9 52
-#define PD10 52
-#define PD11 52
-#define PD12 26
-#define PD13 27
-#define PD14 31
-#define PD15 52
+#define PD5 53
+#define PD6 54
+#define PD7 55
+#define PD8 56
+#define PD9 57
+#define PD10 58
+#define PD11 59
+#define PD12 60
+#define PD13 61
+#define PD14 62
+#define PD15 63
 
-#define PE0 52
-#define PE1 52
-#define PE2 52
-#define PE3 52
-#define PE4 52
-#define PE5 52
-#define PE6 52
-#define PE11 52
-#define PE12 53
-#define PE13 54
-#define PE14 55
-#define PE15 56
+#define PE0 64
+#define PE1 65
+#define PE2 66
+#define PE3 67
+#define PE4 68
+#define PE5 69
+#define PE6 70
+#define PE11 71
+#define PE12 72
+#define PE13 73
+#define PE14 74
+#define PE15 75
 
-#define NUM_DIGITAL_PINS 60
+#define NUM_DIGITAL_PINS 76
 // This must be a literal with a value less than or equal to to MAX_ANALOG_INPUTS
 #define NUM_ANALOG_INPUTS 14
 #define NUM_ANALOG_FIRST 46
