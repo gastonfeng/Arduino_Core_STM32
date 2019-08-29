@@ -34,8 +34,6 @@ board = env.BoardConfig()
 FRAMEWORK_DIR = platform.get_package_dir("framework-arduinoststm32")
 CMSIS_DIR = join(platform.get_package_dir(
     "framework-arduinoststm32"), "CMSIS", "CMSIS")
-print(FRAMEWORK_DIR)
-print(CMSIS_DIR)
 assert isdir(FRAMEWORK_DIR)
 assert isdir(CMSIS_DIR)
 
