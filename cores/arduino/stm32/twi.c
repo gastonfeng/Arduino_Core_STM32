@@ -307,9 +307,9 @@ i2c_status_e i2c_master_write(i2c_t *obj, uint8_t dev_address,
              && (ret == I2C_OK)) {
         delta = (HAL_GetTick() - tickstart);
         if (delta > I2C_TIMEOUT_TICK) {
-          ret = I2C_TIMEOUT;
+          ret = I2C_TIMEOUT;break;
         } else if (HAL_I2C_GetError(&(obj->handle)) != HAL_I2C_ERROR_NONE) {
-          ret = I2C_ERROR;
+          ret = I2C_ERROR;break;
         }
       }
     }
