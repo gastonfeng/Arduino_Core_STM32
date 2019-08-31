@@ -33,53 +33,132 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+extern const int build;
+extern int uptime;
+extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 
 /*----------------------------------------------------------------------------
  *        Pins
  *----------------------------------------------------------------------------*/
-
-// Bluepill USB connector on the top, MCU side - Blackpill USB connector on bottom, MCU Side  (pins are reversed vertically for Arduino Ananlog pin correct sequence.
-// Left Side
-#define PB9  0
-#define PB8  1
-#define PB7  2
-#define PB6  3
-#define PB5  4
-#define PB4  5
-#define PB3  6
-#define PA15 7
-#define PA12 8  // USB DP
-#define PA11 9  // USB DM
+#define PA0 0 // A0
+#define PA1 1 // A1
+#define PA2 2
+#define PA3 3
+#define PA4 4 // A2
+#define PA5 5 // A8 - LED
+#define PA6 6 // A7
+#define PA7 7 // A6
+#define PA8 8
+#define PA9 9
 #define PA10 10
-#define PA9  11
-#define PA8  12
-#define PB15 13
-#define PB14 14
-#define PB13 15
-#define PB12 16 // LED Blackpill
-// Right side
-#define PC13 17 // LED Bluepill
-#define PC14 18
-#define PC15 19
-#define PA0  20 // A0
-#define PA1  21 // A1
-#define PA2  22 // A2
-#define PA3  23 // A3
-#define PA4  24 // A4
-#define PA5  25 // A5
-#define PA6  26 // A6
-#define PA7  27 // A7
-#define PB0  28 // A8
-#define PB1  29 // A9
-#define PB10 30
-#define PB11 31
-// Other
-#define PB2  32 // BOOT1
-#define PA13 33 // SWDI0
-#define PA14 34 // SWCLK
+#define PA11 11
+#define PA12 12
+#define PA13 13 // SWD
+#define PA14 14 // SWD
+#define PA15 15
 
-// This must be a literal
-#define NUM_DIGITAL_PINS        35
+#define PB0 16 // A3
+#define PB1 17 // A11
+#define PB2 18
+#define PB3 19
+#define PB4 20
+#define PB5 21
+#define PB6 22
+#define PB7 23
+#define PB8 24
+#define PB9 25
+#define PB10 26
+#define PB11 27
+#define PB12 28
+#define PB13 29
+#define PB14 30
+#define PB15 31
+
+#define PC0 32 // A5
+#define PC1 33 // A4
+#define PC2 34 // A9
+#define PC3 35 // A10
+#define PC4 36 // A12
+#define PC5 37 // A13
+#define PC6 38
+#define PC7 39
+#define PC8 40
+#define PC9 41
+#define PC10 42
+#define PC11 43
+#define PC12 44
+#define PC13 45
+#define PC14 46
+#define PC15 47
+
+#define PD0 48
+#define PD1 49
+#define PD2 50
+#define PD3 51
+#define PD4 52
+#define PD5 53
+#define PD6 54
+#define PD7 55
+#define PD8 56
+#define PD9 57
+#define PD10 58
+#define PD11 59
+#define PD12 60
+#define PD13 61
+#define PD14 62
+#define PD15 63
+
+#define PE0 64
+#define PE1 65
+#define PE2 66
+#define PE3 67
+#define PE4 68
+#define PE5 69
+#define PE6 70
+#define PE7 71
+#define PE8 72
+#define PE9 73
+#define PE10 74
+#define PE11 75
+#define PE12 76
+#define PE13 77
+#define PE14 78
+#define PE15 79
+
+#define PF0 80
+#define PF1 81
+#define PF2 82
+#define PF3 83
+#define PF4 84
+#define PF5 85
+#define PF6 86
+#define PF7 87
+#define PF8 88
+#define PF9 89
+#define PF10 90
+#define PF11 91
+#define PF12 92
+#define PF13 93
+#define PF14 94
+#define PF15 95
+
+#define PG0 96
+#define PG1 97
+#define PG2 98
+#define PG3 99
+#define PG4 100
+#define PG5 101
+#define PG6 102
+#define PG7 103
+#define PG8 104
+#define PG9 105
+#define PG10 106
+#define PG11 107
+#define PG12 108
+#define PG13 109
+#define PG14 110
+#define PG15 111
+#define NUM_DIGITAL_PINS 112
 // This must be a literal with a value less than or equal to to MAX_ANALOG_INPUTS
 #define NUM_ANALOG_INPUTS       10
 #define NUM_ANALOG_FIRST        20
@@ -115,6 +194,26 @@ extern "C" {
 // Mandatory for Firmata
 #define PIN_SERIAL_RX           PA10
 #define PIN_SERIAL_TX           PA9
+
+#define X1 PG1
+#define X2 PE7
+#define X3 PE8
+#define X4 PE9
+#define X5 PE10
+#define X6 PE11
+#define X7 PE12
+#define X8 PE13
+#define X9 PE14
+#define X10 PE15
+#define Y1 PD1
+#define Y2 PD2
+#define Y3 PD4
+#define Y4 PD6
+#define Y5 PG9
+#define Y6 PG11
+#define Y7 PG13
+#define Y8 PG15
+
 
 #ifdef __cplusplus
 } // extern "C"
