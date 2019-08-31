@@ -48,7 +48,7 @@ const int build = 0;
       PA_2,  //D1
       PA_3,  //D0
       PA_4,  //D48/A2
-      PA_5,  //D13 - LED
+      PA_15,  //D13 - LED
       PA_6,  //D12
       PA_7,  //D11
       PA_8,  //D7
@@ -58,7 +58,7 @@ const int build = 0;
       PA_12, //D36
       PA_13, //D19 - SWD
       PA_14, //D20 - SWD
-      PA_15, //D21
+      PA_5, //D21
       PB_0,  //D49/A3
       PB_1,  //D41
       PB_2,  //D40
@@ -227,26 +227,29 @@ extern "C"
         ;
     }
   }
-void io_init(){
-  pinMode(Y1,OUTPUT);
-  pinMode(Y2,OUTPUT);
-  pinMode(Y3,OUTPUT);
-  pinMode(Y4,OUTPUT);
-  pinMode(Y5,OUTPUT);
-  pinMode(Y6,OUTPUT);
-  pinMode(Y7,OUTPUT);
-  pinMode(Y8,OUTPUT);
-  pinMode(X1,INPUT);
-  pinMode(X2,INPUT);
-  pinMode(X3,INPUT);
-  pinMode(X4,INPUT);
-  pinMode(X5,INPUT);
-  pinMode(X6,INPUT);
-  pinMode(X7,INPUT);
-  pinMode(X8,INPUT);
-  pinMode(X9,INPUT);
-  pinMode(X10,INPUT);
-}
+  void io_init()
+  {
+    analogReadResolution(12);
+    pinMode(Y1, OUTPUT);
+    pinMode(Y2, OUTPUT);
+    pinMode(Y3, OUTPUT);
+    pinMode(Y4, OUTPUT);
+    pinMode(Y5, OUTPUT);
+    pinMode(Y6, OUTPUT);
+    pinMode(Y7, OUTPUT);
+    pinMode(Y8, OUTPUT);
+    pinMode(X1, INPUT_PULLUP);
+    pinMode(X2, INPUT_PULLUP);
+    pinMode(X3, INPUT_PULLUP);
+    pinMode(X4, INPUT_PULLUP);
+    pinMode(X5, INPUT_PULLUP);
+    pinMode(X6, INPUT_PULLUP);
+    pinMode(X7, INPUT_PULLUP);
+    pinMode(X8, INPUT_PULLUP);
+    pinMode(X9, INPUT_PULLUP);
+    pinMode(X10, INPUT_PULLUP);
+    pinMode(XA1, INPUT_ANALOG);
+  }
 #ifdef __cplusplus
 }
 #endif

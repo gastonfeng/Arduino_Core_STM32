@@ -45,7 +45,7 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 #define PA2 2
 #define PA3 3
 #define PA4 4 // A2
-#define PA5 5 // A8 - LED
+#define PA5 15 // A8 - LED
 #define PA6 6 // A7
 #define PA7 7 // A6
 #define PA8 8
@@ -55,7 +55,7 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 #define PA12 12
 #define PA13 13 // SWD
 #define PA14 14 // SWD
-#define PA15 15
+#define PA15 5
 
 #define PB0 16 // A3
 #define PB1 17 // A11
@@ -161,7 +161,7 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 #define NUM_DIGITAL_PINS 112
 // This must be a literal with a value less than or equal to to MAX_ANALOG_INPUTS
 #define NUM_ANALOG_INPUTS       10
-#define NUM_ANALOG_FIRST        20
+#define NUM_ANALOG_FIRST        10
 
 // On-board LED pin number
 #ifdef ARDUINO_BLUEPILL_F103C8
@@ -189,11 +189,11 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 #define TIMER_SERVO             TIM2  //TODO: advanced-control timers don't work
 
 // UART Definitions
-#define SERIAL_UART_INSTANCE    1
+#define SERIAL_UART_INSTANCE    2
 // Default pin used for 'Serial' instance
 // Mandatory for Firmata
-#define PIN_SERIAL_RX           PA10
-#define PIN_SERIAL_TX           PA9
+#define PIN_SERIAL_RX           PA3//PA10
+#define PIN_SERIAL_TX           PA2//PA9
 
 #define X1 PG1
 #define X2 PE7
@@ -213,7 +213,7 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 #define Y6 PG11
 #define Y7 PG13
 #define Y8 PG15
-
+#define XA1 PA5
 
 #ifdef __cplusplus
 } // extern "C"
@@ -241,5 +241,5 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 #define SERIAL_PORT_MONITOR     Serial
 #define SERIAL_PORT_HARDWARE    Serial1
 #endif
-
+void io_init();
 #endif /* _VARIANT_ARDUINO_STM32_ */
