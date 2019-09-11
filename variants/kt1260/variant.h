@@ -161,6 +161,11 @@ extern int atemp_init,atemp,avref;   //芯片温度,基准电压
 
 #define XA4 PA3
 #define XA7 PA4
+
+extern char xx1, xx2, xx3, xx4, xx5, xx6, xx7, xx8, xx9, xx10, xx11, xx12, xx13, xx14, xx15, xx16, yy1, yy2, yy3, yy4, yy5, yy6, yy7, yy8, yy9, yy10, yy11, yy12, yy13, yy14, yy15, yy16, yy17, yy18, yy19, yy20, yy21, yy22, yy23, yy24;
+extern short xa1, xa2, xa3, xa4, xa5, xa6, xa7, xa8, xa9, xa10, ya1, ya2;
+extern int xt1, xt2, xt3, xt4;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

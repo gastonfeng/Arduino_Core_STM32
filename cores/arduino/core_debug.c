@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#endif /* CORE_DEBUG */
 #include "uart.h"
+#endif /* CORE_DEBUG */
 void core_debug(const char *format, ...)
   {
 #ifdef CORE_DEBUG
