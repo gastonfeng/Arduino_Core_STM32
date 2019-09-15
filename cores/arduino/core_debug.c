@@ -10,7 +10,7 @@ void core_debug(const char *format, ...)
     char buf[128];
     va_list args;
     va_start(args, format);
-    sprintf(buf, format, args);
+    vsprintf(buf, format, args);
     uart_debug_write((uint8_t *)buf, strlen(buf));
     va_end(args);
 #else

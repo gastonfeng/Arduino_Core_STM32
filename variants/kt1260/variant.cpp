@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+#include <Arduino.h>
 #include "pins_arduino.h"
 
 #ifdef __cplusplus
@@ -182,6 +182,12 @@ extern "C"
     }
     HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_HSE, RCC_MCODIV_1);
     __HAL_RCC_PLLI2S_ENABLE();
+  }
+
+  unsigned int GetRand()
+  {
+    unsigned int seed = millis();
+    return rand_r(&seed) + millis();
   }
 
 #ifdef __cplusplus

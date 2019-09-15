@@ -55,7 +55,7 @@ extern "C" {
 #endif
 #endif
 #if !defined(DEBUG_UART_BAUDRATE)
-#define DEBUG_UART_BAUDRATE 9600
+#define DEBUG_UART_BAUDRATE 115200
 #endif
 
 /* @brief uart caracteristics */
