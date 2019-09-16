@@ -22,16 +22,7 @@
 extern "C"
 {
 #endif
-#ifdef BUILD_NUMBER
-  const int build = BUILD_NUMBER;
-#else
-const int build = 0;
-#endif
-  int uptime;
-  int atemp_init, atemp, avref; //芯片温度,基准电压
-  char xx1, xx2, xx3, xx4, xx5, xx6, xx7, xx8, xx9, xx10, xx11, xx12, xx13, xx14, xx15, xx16, yy1, yy2, yy3, yy4, yy5, yy6, yy7, yy8, yy9, yy10, yy11, yy12, yy13, yy14, yy15, yy16, yy17, yy18, yy19, yy20, yy21, yy22, yy23, yy24;
-  short xa1, xa2, xa3, xa4, xa5, xa6, xa7, xa8, xa9, xa10, ya1, ya2;
-  int xt1, xt2, xt3, xt4;
+
   // Pin number
   const PinName digitalPin[] = {
       PA_0,  //D46/A0
