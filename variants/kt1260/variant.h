@@ -161,7 +161,8 @@ extern "C"
 
 
   unsigned int GetRand();
-  
+  extern const char *hwModel;
+  extern int uptime;
 #ifdef __cplusplus
 } // extern "C"
 #endif
