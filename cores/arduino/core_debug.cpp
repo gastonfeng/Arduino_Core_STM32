@@ -3,17 +3,21 @@
 #include <stdarg.h>
 #include <string.h>
 #include "uart.h"
+#include <Arduino.h>
 #endif /* CORE_DEBUG */
-void core_debug(const char *format, ...)
+extern "C"
+{
+  void core_debug(const char *format, ...)
   {
 #ifdef CORE_DEBUG
     char buf[128];
     va_list args;
     va_start(args, format);
     vsprintf(buf, format, args);
-    uart_debug_write((uint8_t *)buf, strlen(buf));
+    SERIAL_PORT_MONITOR.print(buf);
     va_end(args);
 #else
-  (void)(format);
+    (void)(format);
 #endif /* CORE_DEBUG */
   }
+}

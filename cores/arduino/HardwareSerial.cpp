@@ -422,8 +422,10 @@ size_t HardwareSerial::write(uint8_t c)
 
   // If the output buffer is full, there's nothing for it other than to
   // wait for the interrupt handler to empty it a bit
+  int t=0;
   while (i == _serial.tx_tail) {
     // nop, the interrupt handler will free up space for us
+    if(t++>10000)return 0;
   }
 
   _serial.tx_buff[_serial.tx_head] = c;
