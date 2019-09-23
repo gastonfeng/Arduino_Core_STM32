@@ -13,7 +13,7 @@ extern "C"
     char buf[128];
     va_list args;
     va_start(args, format);
-    vsprintf(buf, format, args);
+    vsnprintf(buf,128, format, args);
     SERIAL_PORT_MONITOR.print(buf);
     va_end(args);
 #else
