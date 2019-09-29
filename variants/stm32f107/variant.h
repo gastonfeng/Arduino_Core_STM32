@@ -158,9 +158,9 @@ extern "C"
 #define XA4 PA3
 #define XA7 PA4
 
-#define LED_RUN PB0
+#define LED_RUN PC3
 #define LED_ERR PA0
-#define LED_ETH PC3
+#define LED_ETH PB0
   unsigned int GetRand();
   extern const char *hwModel;
   extern int uptime;
