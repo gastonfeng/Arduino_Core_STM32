@@ -24,7 +24,6 @@ extern "C"
 {
 #endif // __cplusplus
 
-
 #define HAL_HCD_MODULE_ENABLED 1
   /*----------------------------------------------------------------------------
  *        Pins
@@ -159,7 +158,9 @@ extern "C"
 #define XA4 PA3
 #define XA7 PA4
 
-
+#define LED_RUN PB0
+#define LED_ERR PA0
+#define LED_ETH PC3
   unsigned int GetRand();
   extern const char *hwModel;
   extern int uptime;
