@@ -112,8 +112,8 @@ extern "C"
 
 #define NUM_DIGITAL_PINS 76
 // This must be a literal with a value less than or equal to to MAX_ANALOG_INPUTS
-#define NUM_ANALOG_INPUTS 14
-#define NUM_ANALOG_FIRST 46
+#define NUM_ANALOG_INPUTS 21
+#define NUM_ANALOG_FIRST PA0
 
 // On-board LED pin number
 #define LED_BUILTIN 13
@@ -156,10 +156,12 @@ extern "C"
 #define X15 PC0
 #define X16 PC2
 
-#define XA4 PA3
-#define XA7 PA4
+#define XA4 A3
+#define XA7 A4
 
-
+#define LED_RUN PC3
+#define LED_ERR PA0
+#define LED_ETH PB0
   unsigned int GetRand();
   extern const char *hwModel;
   extern int uptime;
