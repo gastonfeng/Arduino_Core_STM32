@@ -14,8 +14,8 @@ extern "C"
     va_list args;
     va_start(args, format);
     vsnprintf(buf,128, format, args);
-    SERIAL_PORT_MONITOR.print(buf);
     va_end(args);
+    SERIAL_PORT_MONITOR.print(buf);
 #else
     (void)(format);
 #endif /* CORE_DEBUG */
