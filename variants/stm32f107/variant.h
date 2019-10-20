@@ -115,7 +115,7 @@ extern "C"
 #define NUM_ANALOG_FIRST PA0
 
 // On-board LED pin number
-#define LED_BUILTIN 13
+#define LED_BUILTIN PA0
 #define LED_GREEN LED_BUILTIN
 
 // On-board user button
