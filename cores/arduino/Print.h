@@ -29,7 +29,7 @@
 #define DEC 10
 #define HEX 16
 #define OCT 8
-#define BIN 2
+#define BINARY 2
 
 // uncomment next line to support printing of 64 bit ints.
 #define SUPPORT_LONGLONG
