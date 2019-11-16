@@ -180,7 +180,7 @@ class SPIClass {
     virtual void transfer(byte _pin, void *_bufout, void *_bufin, size_t _count, SPITransferMode _mode = SPI_LAST);
 
     // Transfer functions when user controls himself the CS pin.
-    byte transfer(uint8_t _data, SPITransferMode _mode = SPI_LAST)
+    virtual byte transfer(uint8_t _data, SPITransferMode _mode = SPI_LAST)
     {
       return transfer(CS_PIN_CONTROLLED_BY_USER, _data, _mode);
     }
@@ -190,12 +190,12 @@ class SPIClass {
       return transfer16(CS_PIN_CONTROLLED_BY_USER, _data, _mode);
     }
 
-    void transfer(void *_buf, size_t _count, SPITransferMode _mode = SPI_LAST)
+    virtual void transfer(void *_buf, size_t _count, SPITransferMode _mode = SPI_LAST)
     {
       transfer(CS_PIN_CONTROLLED_BY_USER, _buf, _count, _mode);
     }
 
-    void transfer(void *_bufout, void *_bufin, size_t _count, SPITransferMode _mode = SPI_LAST)
+    virtual void transfer(void *_bufout, void *_bufin, size_t _count, SPITransferMode _mode = SPI_LAST)
     {
       transfer(CS_PIN_CONTROLLED_BY_USER, _bufout, _bufin, _count, _mode);
     }
