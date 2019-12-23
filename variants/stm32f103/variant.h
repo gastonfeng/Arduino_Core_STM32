@@ -172,8 +172,19 @@ extern "C"
 #define PIN_SERIAL_RX           PA10
 #define PIN_SERIAL_TX           PA9
 
+#define BOARD_USART2_TX_PIN PA2
+#define BOARD_USART2_RX_PIN PA3
+#if 0
 #define BOARD_USART3_TX_PIN PC10
 #define BOARD_USART3_RX_PIN PC11
+#else
+#define BOARD_USART3_TX_PIN PD8
+#define BOARD_USART3_RX_PIN PD9
+#endif
+#define BOARD_USART4_TX_PIN PC10
+#define BOARD_USART4_RX_PIN PC11
+#define BOARD_USART5_TX_PIN PC12
+#define BOARD_USART5_RX_PIN PD2
 #ifdef __cplusplus
 } // extern "C"
 #endif
