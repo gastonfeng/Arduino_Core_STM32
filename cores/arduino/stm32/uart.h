@@ -83,7 +83,7 @@ struct serial_s {
 };
 
 /* Exported constants --------------------------------------------------------*/
-#define TX_TIMEOUT  1000
+#define TX_TIMEOUT  10
 
 #if defined(USART3_BASE) && !defined(USART3_IRQn)
 #if defined(STM32F0xx)
