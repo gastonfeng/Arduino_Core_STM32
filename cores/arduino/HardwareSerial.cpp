@@ -424,8 +424,9 @@ size_t HardwareSerial::write(uint8_t c)
   // wait for the interrupt handler to empty it a bit
   int t=0;
   while (i == _serial.tx_tail) {
+    delayMicroseconds(100);
     // nop, the interrupt handler will free up space for us
-    if(t++>10000)break;
+    if(t++>10)break;
   }
 
   _serial.tx_buff[_serial.tx_head] = c;
