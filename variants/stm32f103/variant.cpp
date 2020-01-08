@@ -197,7 +197,7 @@ extern "C"
     {
       Error_Handler();
     }
-    HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_PLLCLK, RCC_MCODIV_1);
+    SystemCoreClock=64000000;
 #else
   RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
