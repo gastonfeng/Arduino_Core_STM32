@@ -140,8 +140,6 @@ extern "C"
 
   unsigned int GetRand();
   void HAL_GetUID(unsigned int *UID);
-  extern const char *hwModel;
-  extern int uptime;
 #ifdef __cplusplus
 } // extern "C"
 #endif
