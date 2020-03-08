@@ -162,8 +162,6 @@ extern "C"
 #define LED_ERR PA0
 #define LED_ETH PB0
   unsigned int GetRand();
-  extern const char *hwModel;
-  extern int uptime;
 #ifdef __cplusplus
 } // extern "C"
 #endif
