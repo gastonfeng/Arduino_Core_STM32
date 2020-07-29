@@ -109,8 +109,8 @@ extern "C" {
 #define SERIAL_UART_INSTANCE    1 //Connected to ST-Link
 // Default pin used for 'Serial' instance (ex: ST-Link)
 // Mandatory for Firmata
-#define PIN_SERIAL_RX           0
-#define PIN_SERIAL_TX           1
+#define PIN_SERIAL_RX           PA10
+#define PIN_SERIAL_TX           PA9
 
 #ifdef __cplusplus
 } // extern "C"
