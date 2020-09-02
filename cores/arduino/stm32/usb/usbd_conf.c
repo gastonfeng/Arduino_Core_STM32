@@ -12,7 +12,7 @@
   * This software component is licensed by ST under Ultimate Liberty license
   * SLA0044, the "License"; You may not use this file except in compliance with
   * the License. You may obtain a copy of the License at:
-  *                      http://www.st.com/SLA0044
+  *                      www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_core.h"
 #include "usbd_if.h"
+#include "usbd_ep_conf.h"
 #include "stm32yyxx_ll_pwr.h"
 
 #ifndef HAL_PCD_MODULE_ENABLED
@@ -27,14 +28,12 @@
 #else
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-/* Size in words, byte size divided by 2 */
-#define PMA_EP0_OUT_ADDR (8 * 4)
-#define PMA_EP0_IN_ADDR (PMA_EP0_OUT_ADDR + USB_MAX_EP0_SIZE)
-#define PMA_CDC_OUT_BASE (PMA_EP0_IN_ADDR + USB_MAX_EP0_SIZE)
-#define PMA_CDC_OUT_ADDR ((PMA_CDC_OUT_BASE + USB_FS_MAX_PACKET_SIZE) | \
-                         (PMA_CDC_OUT_BASE << 16U))
-#define PMA_CDC_IN_ADDR (PMA_CDC_OUT_BASE + USB_FS_MAX_PACKET_SIZE * 2)
-#define PMA_CDC_CMD_ADDR (PMA_CDC_IN_ADDR + USB_FS_MAX_PACKET_SIZE)
+#if !defined(USBD_VBUS_DETECTION_ENABLE)
+  #define VBUS_SENSING DISABLE
+#else
+  #define VBUS_SENSING ENABLE
+#endif
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 PCD_HandleTypeDef g_hpcd;
@@ -88,7 +87,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     __HAL_REMAPINTERRUPT_USB_ENABLE();
 #endif
 
-#if defined(STM32WBxx)
+#if defined(STM32G4xx) || defined(STM32WBxx)
     HAL_NVIC_SetPriority(USB_HP_IRQn, USBD_IRQ_PRIO, USBD_IRQ_SUBPRIO);
     HAL_NVIC_EnableIRQ(USB_HP_IRQn);
     HAL_NVIC_SetPriority(USB_LP_IRQn, USBD_IRQ_PRIO, USBD_IRQ_SUBPRIO);
@@ -387,11 +386,11 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
   * @retval None
   */
 #ifdef USE_USB_HS
-void OTG_HS_IRQHandler(void)
+  void OTG_HS_IRQHandler(void)
 #elif defined(USB_OTG_FS)
-void OTG_FS_IRQHandler(void)
+  void OTG_FS_IRQHandler(void)
 #else /* USB */
-void USB_IRQHandler(void)
+  void USB_IRQHandler(void)
 #endif
 {
   HAL_PCD_IRQHandler(&g_hpcd);
@@ -424,11 +423,11 @@ void USB_LP_IRQHandler(void)
   * @retval None
   */
 #ifdef USE_USB_HS
-void OTG_HS_WKUP_IRQHandler(void)
+  void OTG_HS_WKUP_IRQHandler(void)
 #elif defined(USB_OTG_FS)
-void OTG_FS_WKUP_IRQHandler(void)
+  void OTG_FS_WKUP_IRQHandler(void)
 #else
-void USBWakeUp_IRQHandler(void)
+  void USBWakeUp_IRQHandler(void)
 #endif
 {
   if ((&g_hpcd)->Init.low_power_enable) {
@@ -465,8 +464,16 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 {
   USBD_reenumerate();
   /* Set common LL Driver parameters */
-  g_hpcd.Init.dev_endpoints = 4;
+  g_hpcd.Init.dev_endpoints = DEV_NUM_EP;
+#ifdef DEP0CTL_MPS_64
   g_hpcd.Init.ep0_mps = DEP0CTL_MPS_64;
+#else
+#ifdef EP_MPS_64
+  g_hpcd.Init.ep0_mps = EP_MPS_64;
+#else
+#error "Missing EP0 MPS definition: DEP0CTL_MPS_64 or EP_MPS_64!"
+#endif
+#endif
 #if !defined(STM32F1xx) && !defined(STM32F2xx) || defined(USB)
   g_hpcd.Init.lpm_enable = DISABLE;
   g_hpcd.Init.battery_charging_enable = DISABLE;
@@ -485,14 +492,14 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   g_hpcd.Init.phy_itface = PCD_PHY_ULPI;
 #endif
   g_hpcd.Init.speed = PCD_SPEED_HIGH;
-  g_hpcd.Init.vbus_sensing_enable = ENABLE;
+  g_hpcd.Init.vbus_sensing_enable = VBUS_SENSING;
   g_hpcd.Init.use_external_vbus = DISABLE;
 #else /* USE_USB_FS */
 #ifdef USB_OTG_FS
   g_hpcd.Instance = USB_OTG_FS;
   g_hpcd.Init.use_dedicated_ep1 = DISABLE;
   g_hpcd.Init.dma_enable = DISABLE;
-  g_hpcd.Init.vbus_sensing_enable = DISABLE;
+  g_hpcd.Init.vbus_sensing_enable = VBUS_SENSING;
   g_hpcd.Init.use_external_vbus = DISABLE;
 #else
   g_hpcd.Instance = USB;
@@ -510,26 +517,17 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
     Error_Handler();
   }
 
-#ifdef USE_USB_HS
+
+#if !defined (USB)
   /* configure EPs FIFOs */
-  HAL_PCDEx_SetRxFiFo(&g_hpcd, 0x200);
-  HAL_PCDEx_SetTxFiFo(&g_hpcd, 0, 0x80);
-  HAL_PCDEx_SetTxFiFo(&g_hpcd, 1, 0x40);
-  HAL_PCDEx_SetTxFiFo(&g_hpcd, 2, 0x160);
-#else /* USE_USB_FS */
-#ifdef USB_OTG_FS
-  /* configure EPs FIFOs */
-  HAL_PCDEx_SetRxFiFo(&g_hpcd, 0x80);
-  HAL_PCDEx_SetTxFiFo(&g_hpcd, 0, 0x40);
-  HAL_PCDEx_SetTxFiFo(&g_hpcd, 1, 0x40);
-  HAL_PCDEx_SetTxFiFo(&g_hpcd, 2, 0x40);
+  HAL_PCDEx_SetRxFiFo(&g_hpcd, ep_def[0].ep_size);
+  for (uint32_t i = 1; i < (DEV_NUM_EP + 1); i++) {
+    HAL_PCDEx_SetTxFiFo(&g_hpcd, ep_def[i].ep_adress & 0xF, ep_def[i].ep_size);
+  }
 #else
-  HAL_PCDEx_PMAConfig(&g_hpcd, 0x00, PCD_SNG_BUF, PMA_EP0_OUT_ADDR);
-  HAL_PCDEx_PMAConfig(&g_hpcd, 0x80, PCD_SNG_BUF, PMA_EP0_IN_ADDR);
-  HAL_PCDEx_PMAConfig(&g_hpcd, 0x01, PCD_DBL_BUF, PMA_CDC_OUT_ADDR);
-  HAL_PCDEx_PMAConfig(&g_hpcd, 0x82, PCD_SNG_BUF, PMA_CDC_IN_ADDR);
-  HAL_PCDEx_PMAConfig(&g_hpcd, 0x83, PCD_SNG_BUF, PMA_CDC_CMD_ADDR);
-#endif
+  for (uint32_t i = 0; i < (DEV_NUM_EP + 1); i++) {
+    HAL_PCDEx_PMAConfig(&g_hpcd, ep_def[i].ep_adress, ep_def[i].ep_kind, ep_def[i].ep_size);
+  }
 #endif /* USE_USB_HS */
   return USBD_OK;
 }
@@ -675,7 +673,7 @@ USBD_StatusTypeDef USBD_LL_SetUSBAddress(USBD_HandleTypeDef *pdev, uint8_t dev_a
 USBD_StatusTypeDef USBD_LL_Transmit(USBD_HandleTypeDef *pdev,
                                     uint8_t ep_addr,
                                     uint8_t *pbuf,
-                                    uint16_t size)
+                                    uint32_t size)
 {
   HAL_PCD_EP_Transmit(pdev->pData, ep_addr, pbuf, size);
   return USBD_OK;
@@ -692,7 +690,7 @@ USBD_StatusTypeDef USBD_LL_Transmit(USBD_HandleTypeDef *pdev,
 USBD_StatusTypeDef USBD_LL_PrepareReceive(USBD_HandleTypeDef *pdev,
                                           uint8_t ep_addr,
                                           uint8_t *pbuf,
-                                          uint16_t size)
+                                          uint32_t size)
 {
   HAL_PCD_EP_Receive(pdev->pData, ep_addr, pbuf, size);
   return USBD_OK;

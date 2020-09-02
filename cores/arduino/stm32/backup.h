@@ -31,7 +31,8 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 #if (!defined(STM32F0xx) && !defined(STM32F3xx) && !defined(STM32L0xx) &&\
-  !defined(STM32L1xx) && !defined(STM32L4xx)) || defined(RTC_BACKUP_SUPPORT)
+  !defined(STM32L1xx) && !defined(STM32L4xx) && !defined(STM32MP1xx)) || \
+  defined(RTC_BACKUP_SUPPORT)
 #if !defined(STM32L412xx) && !defined(STM32L422xx)
 #define ENABLE_BACKUP_SUPPORT
 #endif
@@ -124,6 +125,8 @@ static inline void setBackupRegister(uint32_t index, uint32_t value)
   LL_RTC_BKP_SetRegister(BKP, index, value);
 #elif defined(STM32G0xx)
   LL_RTC_BKP_SetRegister(TAMP, index, value);
+#elif defined(STM32G4xx)
+  LL_RTC_BKP_SetRegister(RTC, index, value);
 #else
 #ifdef ENABLE_BACKUP_SUPPORT
   LL_RTC_BAK_SetRegister(RTC, index, value);
@@ -140,6 +143,8 @@ static inline uint32_t getBackupRegister(uint32_t index)
   return LL_RTC_BKP_GetRegister(BKP, index);
 #elif defined(STM32G0xx)
   return LL_RTC_BKP_GetRegister(TAMP, index);
+#elif defined(STM32G4xx)
+  return LL_RTC_BKP_GetRegister(RTC, index);
 #else
 #ifdef ENABLE_BACKUP_SUPPORT
   return LL_RTC_BAK_GetRegister(RTC, index);

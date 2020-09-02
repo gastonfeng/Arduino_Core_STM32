@@ -213,9 +213,13 @@ typedef enum
   HAL_RTC_ALARM_B_EVENT_CB_ID           = 0x01U,    /*!< RTC Alarm B Event Callback ID      */
   HAL_RTC_TIMESTAMP_EVENT_CB_ID         = 0x02U,    /*!< RTC TimeStamp Event Callback ID    */
   HAL_RTC_WAKEUPTIMER_EVENT_CB_ID       = 0x03U,    /*!< RTC WakeUp Timer Event Callback ID */
+#if defined(RTC_TAMPER1_SUPPORT)
   HAL_RTC_TAMPER1_EVENT_CB_ID           = 0x04U,    /*!< RTC Tamper 1 Callback ID           */
+#endif
   HAL_RTC_TAMPER2_EVENT_CB_ID           = 0x05U,    /*!< RTC Tamper 2 Callback ID           */
+#if defined(RTC_TAMPER3_SUPPORT)
   HAL_RTC_TAMPER3_EVENT_CB_ID           = 0x06U,    /*!< RTC Tamper 3 Callback ID           */
+#endif
   HAL_RTC_MSPINIT_CB_ID                 = 0x0EU,    /*!< RTC Msp Init callback ID           */
   HAL_RTC_MSPDEINIT_CB_ID               = 0x0FU     /*!< RTC Msp DeInit callback ID         */
 }HAL_RTC_CallbackIDTypeDef;
@@ -721,7 +725,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   * @brief Check whether the RTC Alarm associated Exti line interrupt flag is set or not by core 2.
   * @retval Line Status.
   */
-#define __HAL_RTC_ALARM_EXTIC2_GET_FLAG()            (EXTI->PR2 & RTC_EXTI_LINE_ALARM_EVENT)
+#define __HAL_RTC_ALARM_EXTIC2_GET_FLAG()            (EXTI->PR1 & RTC_EXTI_LINE_ALARM_EVENT)
 
 /**
   * @brief Clear the RTC Alarm associated Exti line flag.
@@ -733,7 +737,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   * @brief Clear the RTC Alarm associated Exti line flag.
   * @retval None.
   */
-#define __HAL_RTC_ALARM_EXTIC2_CLEAR_FLAG()          (EXTI->PR2 = (RTC_EXTI_LINE_ALARM_EVENT))
+#define __HAL_RTC_ALARM_EXTIC2_CLEAR_FLAG()          (EXTI->PR1 = (RTC_EXTI_LINE_ALARM_EVENT))
 
 /*----------------------------*/
 /**

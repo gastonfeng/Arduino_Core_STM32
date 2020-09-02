@@ -58,7 +58,13 @@ extern "C" {
 /** @defgroup SYSTEM_LL_Private_Constants SYSTEM Private Constants
   * @{
   */
-
+/**
+ * @brief VREFBUF VREF_SC0 & VREF_SC1 calibration values
+ */
+#define VREFBUF_SC0_CAL_ADDR   ((uint8_t*) (0x1FFF75F0UL)) /*!<  Address of VREFBUF trimming value for VRS=0,
+                                                                 VREF_SC0 in STM32WB datasheet */
+#define VREFBUF_SC1_CAL_ADDR   ((uint8_t*) (0x1FFF7530UL)) /*!<  Address of VREFBUF trimming value for VRS=1,
+                                                                 VREF_SC1 in STM32WB datasheet */
 /**
   * @}
   */
@@ -77,7 +83,9 @@ extern "C" {
 #define LL_SYSCFG_REMAP_FLASH                   0x00000000U                                           /*!< Main Flash memory mapped at 0x00000000   */
 #define LL_SYSCFG_REMAP_SYSTEMFLASH             SYSCFG_MEMRMP_MEM_MODE_0                              /*!< System Flash memory mapped at 0x00000000 */
 #define LL_SYSCFG_REMAP_SRAM                    (SYSCFG_MEMRMP_MEM_MODE_1 | SYSCFG_MEMRMP_MEM_MODE_0) /*!< SRAM1 mapped at 0x00000000               */
+#if defined(QUADSPI)
 #define LL_SYSCFG_REMAP_QUADSPI                 (SYSCFG_MEMRMP_MEM_MODE_2 | SYSCFG_MEMRMP_MEM_MODE_1) /*!< QUADSPI memory mapped at 0x00000000      */
+#endif
 /**
   * @}
   */
@@ -90,7 +98,9 @@ extern "C" {
 #define LL_SYSCFG_I2C_FASTMODEPLUS_PB8          SYSCFG_CFGR1_I2C_PB8_FMP /*!< Enable Fast Mode Plus on PB8       */
 #define LL_SYSCFG_I2C_FASTMODEPLUS_PB9          SYSCFG_CFGR1_I2C_PB9_FMP /*!< Enable Fast Mode Plus on PB9       */
 #define LL_SYSCFG_I2C_FASTMODEPLUS_I2C1         SYSCFG_CFGR1_I2C1_FMP    /*!< Enable Fast Mode Plus on I2C1 pins */
+#if defined(I2C3)
 #define LL_SYSCFG_I2C_FASTMODEPLUS_I2C3         SYSCFG_CFGR1_I2C3_FMP    /*!< Enable Fast Mode Plus on I2C3 pins */
+#endif
 /**
   * @}
   */
@@ -187,6 +197,7 @@ extern "C" {
 #define LL_SYSCFG_SRAM2WRP_PAGE33               SYSCFG_SWPR2_PAGE33      /*!< SRAM2B Write protection page 33 */
 #define LL_SYSCFG_SRAM2WRP_PAGE34               SYSCFG_SWPR2_PAGE34      /*!< SRAM2B Write protection page 34 */
 #define LL_SYSCFG_SRAM2WRP_PAGE35               SYSCFG_SWPR2_PAGE35      /*!< SRAM2B Write protection page 35 */
+#if defined(SYSCFG_SWPR2_PAGE36)
 #define LL_SYSCFG_SRAM2WRP_PAGE36               SYSCFG_SWPR2_PAGE36      /*!< SRAM2B Write protection page 36 */
 #define LL_SYSCFG_SRAM2WRP_PAGE37               SYSCFG_SWPR2_PAGE37      /*!< SRAM2B Write protection page 37 */
 #define LL_SYSCFG_SRAM2WRP_PAGE38               SYSCFG_SWPR2_PAGE38      /*!< SRAM2B Write protection page 38 */
@@ -215,6 +226,7 @@ extern "C" {
 #define LL_SYSCFG_SRAM2WRP_PAGE61               SYSCFG_SWPR2_PAGE61      /*!< SRAM2B Write protection page 61 */
 #define LL_SYSCFG_SRAM2WRP_PAGE62               SYSCFG_SWPR2_PAGE62      /*!< SRAM2B Write protection page 62 */
 #define LL_SYSCFG_SRAM2WRP_PAGE63               SYSCFG_SWPR2_PAGE63      /*!< SRAM2B Write protection page 63 */
+#endif
 /**
   * @}
   */
@@ -223,8 +235,12 @@ extern "C" {
   * @{
   */
 #define LL_SYSCFG_GRP1_TIM1                     SYSCFG_IMR1_TIM1IM     /*!< Enabling of interrupt from Timer 1 to CPU1                    */
+#if defined(TIM16)
 #define LL_SYSCFG_GRP1_TIM16                    SYSCFG_IMR1_TIM16IM    /*!< Enabling of interrupt from Timer 16 to CPU1                   */
+#endif
+#if defined(TIM17)
 #define LL_SYSCFG_GRP1_TIM17                    SYSCFG_IMR1_TIM17IM    /*!< Enabling of interrupt from Timer 17 to CPU1                   */
+#endif
 
 #define LL_SYSCFG_GRP1_EXTI5                    SYSCFG_IMR1_EXTI5IM    /*!< Enabling of interrupt from External Interrupt Line 5 to CPU1  */
 #define LL_SYSCFG_GRP1_EXTI6                    SYSCFG_IMR1_EXTI6IM    /*!< Enabling of interrupt from External Interrupt Line 6 to CPU1  */
@@ -238,7 +254,9 @@ extern "C" {
 #define LL_SYSCFG_GRP1_EXTI14                   SYSCFG_IMR1_EXTI14IM   /*!< Enabling of interrupt from External Interrupt Line 14 to CPU1 */
 #define LL_SYSCFG_GRP1_EXTI15                   SYSCFG_IMR1_EXTI15IM   /*!< Enabling of interrupt from External Interrupt Line 15 to CPU1 */
 
+#if defined(SYSCFG_IMR2_PVM1IM)
 #define LL_SYSCFG_GRP2_PVM1                     SYSCFG_IMR2_PVM1IM     /*!< Enabling of interrupt from Power Voltage Monitoring 1 to CPU1 */
+#endif
 #define LL_SYSCFG_GRP2_PVM3                     SYSCFG_IMR2_PVM3IM     /*!< Enabling of interrupt from Power Voltage Monitoring 3 to CPU1 */
 #define LL_SYSCFG_GRP2_PVD                      SYSCFG_IMR2_PVDIM      /*!< Enabling of interrupt from Power Voltage Detector to CPU1     */
 /**
@@ -256,8 +274,12 @@ extern "C" {
 #define LL_C2_SYSCFG_GRP1_FLASH                 SYSCFG_C2IMR1_FLASHIM    /*!< Enabling of interrupt from FLASH to CPU2                          */
 #define LL_C2_SYSCFG_GRP1_PKA                   SYSCFG_C2IMR1_PKAIM      /*!< Enabling of interrupt from Public Key Accelerator to CPU2         */
 #define LL_C2_SYSCFG_GRP1_RNG                   SYSCFG_C2IMR1_RNGIM      /*!< Enabling of interrupt from Random Number Generator to CPU2        */
+#if defined(AES1)
 #define LL_C2_SYSCFG_GRP1_AES1                  SYSCFG_C2IMR1_AES1IM     /*!< Enabling of interrupt from Advanced Encryption Standard 1 to CPU2 */
+#endif
+#if defined(COMP1)
 #define LL_C2_SYSCFG_GRP1_COMP                  SYSCFG_C2IMR1_COMPIM     /*!< Enabling of interrupt from Comparator to CPU2                     */
+#endif
 #define LL_C2_SYSCFG_GRP1_ADC                   SYSCFG_C2IMR1_ADCIM      /*!< Enabling of interrupt from Analog Digital Converter to CPU2       */
 
 #define LL_C2_SYSCFG_GRP1_EXTI0                 SYSCFG_C2IMR1_EXTI0IM    /*!< Enabling of interrupt from External Interrupt Line 0 to CPU2      */
@@ -285,6 +307,7 @@ extern "C" {
 #define LL_C2_SYSCFG_GRP2_DMA1CH6               SYSCFG_C2IMR2_DMA1CH6IM  /*!< Enabling of interrupt from DMA1 Channel 6 to CPU2                 */
 #define LL_C2_SYSCFG_GRP2_DMA1CH7               SYSCFG_C2IMR2_DMA1CH7IM  /*!< Enabling of interrupt from DMA1 Channel 7 to CPU2                 */
 
+#if defined(DMA2)
 #define LL_C2_SYSCFG_GRP2_DMA2CH1               SYSCFG_C2IMR2_DMA2CH1IM  /*!< Enabling of interrupt from DMA2 Channel 1 to CPU2                 */
 #define LL_C2_SYSCFG_GRP2_DMA2CH2               SYSCFG_C2IMR2_DMA2CH2IM  /*!< Enabling of interrupt from DMA2 Channel 2 to CPU2                 */
 #define LL_C2_SYSCFG_GRP2_DMA2CH3               SYSCFG_C2IMR2_DMA2CH3IM  /*!< Enabling of interrupt from DMA2 Channel 3 to CPU2                 */
@@ -292,13 +315,18 @@ extern "C" {
 #define LL_C2_SYSCFG_GRP2_DMA2CH5               SYSCFG_C2IMR2_DMA2CH5IM  /*!< Enabling of interrupt from DMA2 Channel 5 to CPU2                 */
 #define LL_C2_SYSCFG_GRP2_DMA2CH6               SYSCFG_C2IMR2_DMA2CH6IM  /*!< Enabling of interrupt from DMA2 Channel 6 to CPU2                 */
 #define LL_C2_SYSCFG_GRP2_DMA2CH7               SYSCFG_C2IMR2_DMA2CH7IM  /*!< Enabling of interrupt from DMA2 Channel 7 to CPU2                 */
+#endif
 
 #define LL_C2_SYSCFG_GRP2_DMAMUX1               SYSCFG_C2IMR2_DMAMUX1IM  /*!< Enabling of interrupt from DMAMUX1 to CPU2                        */
+#if defined(SYSCFG_C2IMR2_PVM1IM)
 #define LL_C2_SYSCFG_GRP2_PVM1                  SYSCFG_C2IMR2_PVM1IM     /*!< Enabling of interrupt from Power Voltage Monitoring 1 to CPU2     */
+#endif
 #define LL_C2_SYSCFG_GRP2_PVM3                  SYSCFG_C2IMR2_PVM3IM     /*!< Enabling of interrupt from Power Voltage Monitoring 3 to CPU2     */
 #define LL_C2_SYSCFG_GRP2_PVD                   SYSCFG_C2IMR2_PVDIM      /*!< Enabling of interrupt from Power Voltage Detector to CPU2         */
 #define LL_C2_SYSCFG_GRP2_TSC                   SYSCFG_C2IMR2_TSCIM      /*!< Enabling of interrupt from Touch Sensing Controller to CPU2       */
+#if defined(LCD)
 #define LL_C2_SYSCFG_GRP2_LCD                   SYSCFG_C2IMR2_LCDIM      /*!< Enabling of interrupt from Liquid Crystal Display to CPU2         */
+#endif
 /**
   * @}
   */
@@ -306,7 +334,9 @@ extern "C" {
 /** @defgroup SYSTEM_LL_EC_SECURE_IP_ACCESS SYSCFG SECURE IP ACCESS
   * @{
   */
+#if defined(AES1)
 #define LL_SYSCFG_SECURE_ACCESS_AES1            SYSCFG_SIPCR_SAES1       /*!< Enabling the security access of Advanced Encryption Standard 1 KEY[7:0] */
+#endif
 #define LL_SYSCFG_SECURE_ACCESS_AES2            SYSCFG_SIPCR_SAES2       /*!< Enabling the security access of Advanced Encryption Standard 2          */
 #define LL_SYSCFG_SECURE_ACCESS_PKA             SYSCFG_SIPCR_SPKA        /*!< Enabling the security access of Public Key Accelerator                  */
 #define LL_SYSCFG_SECURE_ACCESS_RNG             SYSCFG_SIPCR_SRNG        /*!< Enabling the security access of Random Number Generator                 */
@@ -322,7 +352,9 @@ extern "C" {
 #define LL_DBGMCU_APB1_GRP1_WWDG_STOP      DBGMCU_APB1FZR1_DBG_WWDG_STOP   /*!< The window watchdog counter clock is stopped when the core is halted      */
 #define LL_DBGMCU_APB1_GRP1_IWDG_STOP      DBGMCU_APB1FZR1_DBG_IWDG_STOP   /*!< The independent watchdog counter clock is stopped when the core is halted */
 #define LL_DBGMCU_APB1_GRP1_I2C1_STOP      DBGMCU_APB1FZR1_DBG_I2C1_STOP   /*!< The I2C1 SMBus timeout is frozen                                          */
+#if defined(I2C3)
 #define LL_DBGMCU_APB1_GRP1_I2C3_STOP      DBGMCU_APB1FZR1_DBG_I2C3_STOP   /*!< The I2C3 SMBus timeout is frozen                                          */
+#endif
 #define LL_DBGMCU_APB1_GRP1_LPTIM1_STOP    DBGMCU_APB1FZR1_DBG_LPTIM1_STOP /*!< The counter clock of LPTIM1 is stopped when the core is halted            */
 /**
   * @}
@@ -335,7 +367,9 @@ extern "C" {
 #define LL_C2_DBGMCU_APB1_GRP1_RTC_STOP    DBGMCU_C2APB1FZR1_DBG_RTC_STOP    /*!< The clock of the RTC counter is stopped when the core is halted           */
 #define LL_C2_DBGMCU_APB1_GRP1_IWDG_STOP   DBGMCU_C2APB1FZR1_DBG_IWDG_STOP   /*!< The independent watchdog counter clock is stopped when the core is halted */
 #define LL_C2_DBGMCU_APB1_GRP1_I2C1_STOP   DBGMCU_C2APB1FZR1_DBG_I2C1_STOP   /*!< The I2C1 SMBus timeout is frozen                                          */
+#if defined(I2C3)
 #define LL_C2_DBGMCU_APB1_GRP1_I2C3_STOP   DBGMCU_C2APB1FZR1_DBG_I2C3_STOP   /*!< The I2C3 SMBus timeout is frozen                                          */
+#endif
 #define LL_C2_DBGMCU_APB1_GRP1_LPTIM1_STOP DBGMCU_C2APB1FZR1_DBG_LPTIM1_STOP /*!< The counter clock of LPTIM1 is stopped when the core is halted            */
 /**
   * @}
@@ -361,8 +395,12 @@ extern "C" {
   * @{
   */
 #define LL_DBGMCU_APB2_GRP1_TIM1_STOP      DBGMCU_APB2FZR_DBG_TIM1_STOP   /*!< The counter clock of TIM1 is stopped when the core is halted              */
+#if defined(TIM16)
 #define LL_DBGMCU_APB2_GRP1_TIM16_STOP     DBGMCU_APB2FZR_DBG_TIM16_STOP  /*!< The counter clock of TIM16 is stopped when the core is halted             */
+#endif
+#if defined(TIM17)
 #define LL_DBGMCU_APB2_GRP1_TIM17_STOP     DBGMCU_APB2FZR_DBG_TIM17_STOP  /*!< The counter clock of TIM17 is stopped when the core is halted             */
+#endif
 /**
   * @}
   */
@@ -371,8 +409,12 @@ extern "C" {
   * @{
   */
 #define LL_C2_DBGMCU_APB2_GRP1_TIM1_STOP   DBGMCU_C2APB2FZR_DBG_TIM1_STOP   /*!< The counter clock of TIM1 is stopped when the core is halted              */
+#if defined(TIM16)
 #define LL_C2_DBGMCU_APB2_GRP1_TIM16_STOP  DBGMCU_C2APB2FZR_DBG_TIM16_STOP  /*!< The counter clock of TIM16 is stopped when the core is halted             */
+#endif
+#if defined(TIM17)
 #define LL_C2_DBGMCU_APB2_GRP1_TIM17_STOP  DBGMCU_C2APB2FZR_DBG_TIM17_STOP  /*!< The counter clock of TIM17 is stopped when the core is halted             */
+#endif
 /**
   * @}
   */
@@ -482,6 +524,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogBooster(void)
   CLEAR_BIT(SYSCFG->CFGR1, SYSCFG_CFGR1_BOOSTEN);
 }
 
+#if defined(SYSCFG_CFGR1_ANASWVDD)
 /**
   * @brief  Enable the Analog GPIO switch to control voltage selection
   *         when the supply voltage is supplied by VDDA
@@ -505,6 +548,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogGpioSwitch(void)
 {
   CLEAR_BIT(SYSCFG->CFGR1, SYSCFG_CFGR1_ANASWVDD);
 }
+#endif
 
 /**
   * @brief  Enable the I2C fast mode plus driving capability.
@@ -1855,6 +1899,24 @@ __STATIC_INLINE uint32_t LL_VREFBUF_GetVoltageScaling(void)
 }
 
 /**
+  * @brief  Get the VREFBUF trimming value for VRS=0 (VREF_SC0)
+  * @retval Between 0 and 0x3F
+  */
+__STATIC_INLINE uint32_t LL_VREFBUF_SC0_GetCalibration(void)
+{
+  return (uint32_t)(*VREFBUF_SC0_CAL_ADDR);
+}
+
+/**
+  * @brief  Get the VREFBUF trimming value for VRS=1 (VREF_SC1)
+  * @retval Between 0 and 0x3F
+  */
+__STATIC_INLINE uint32_t LL_VREFBUF_SC1_GetCalibration(void)
+{
+  return (uint32_t)(*VREFBUF_SC1_CAL_ADDR);
+}
+
+/**
   * @brief  Check if Voltage reference buffer is ready
   * @rmtoll VREFBUF_CSR  VRR           LL_VREFBUF_IsVREFReady
   * @retval State of bit (1 or 0).
@@ -1876,6 +1938,11 @@ __STATIC_INLINE uint32_t LL_VREFBUF_GetTrimming(void)
 
 /**
   * @brief  Set the trimming code for VREFBUF calibration (Tune the internal reference buffer voltage)
+  * @note   Each VrefBuf voltage scale is calibrated in production for each device,
+  *         data stored in flash memory.
+  *         Functions @ref LL_VREFBUF_SC0_GetCalibration and
+  *         @ref LL_VREFBUF_SC0_GetCalibration can be used to retrieve
+  *         these calibration data.
   * @rmtoll VREFBUF_CCR  TRIM          LL_VREFBUF_SetTrimming
   * @param  Value Between 0 and 0x3F
   * @retval None
@@ -2160,8 +2227,8 @@ __STATIC_INLINE uint32_t LL_FLASH_GetUDN(void)
   * @brief  Return the Device ID
   * @note   The 64-bit UID64 may be used by Firmware to derive BLE 48-bit Device Address EUI-48 or
   *         802.15.4 64-bit Device Address EUI-64.
-  *         For STM32WBxxxx devices, the device ID is 0x05
-  * @retval Values between Min_Data=0x00 and Max_Data=0xFF (ex: Device ID is 0x05)
+  *         For STM32WBxxxx devices, the device ID is 0x26
+  * @retval Values between Min_Data=0x00 and Max_Data=0xFF (ex: Device ID is 0x26 fo STM32WB55x)
   */
 __STATIC_INLINE uint32_t LL_FLASH_GetDeviceID(void)
 {
@@ -2179,6 +2246,10 @@ __STATIC_INLINE uint32_t LL_FLASH_GetSTCompanyID(void)
 {
   return (uint32_t)(((READ_REG(*((uint32_t *)UID64_BASE + 1U))) >> 8U ) & 0x00FFFFFFU);
 }
+/**
+  * @}
+  */
+
 /**
   * @}
   */

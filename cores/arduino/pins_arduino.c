@@ -40,9 +40,14 @@ PinName analogInputToPinName(uint32_t pin)
   PinName pn = digitalPinToPinName(analogInputToDigitalPin(pin));
   if (pn == NC) {
     switch (pin) {
-#ifdef ATEMP
+#if defined(ADC_CHANNEL_TEMPSENSOR) || defined(ADC_CHANNEL_TEMPSENSOR_ADC1)
       case ATEMP:
         pn = PADC_TEMP;
+        break;
+#endif
+#if defined(ADC5) && defined(ADC_CHANNEL_TEMPSENSOR_ADC5)
+      case ATEMP_ADC5:
+        pn = PADC_TEMP_ADC5;
         break;
 #endif
 #ifdef AVREF
@@ -60,6 +65,42 @@ PinName analogInputToPinName(uint32_t pin)
     }
   }
   return pn;
+}
+
+bool pinIsAnalogInput(uint32_t pin)
+{
+  bool ret = false;
+#if NUM_ANALOG_INPUTS > 0
+#ifndef NUM_ANALOG_LAST
+  ret = (pin >= A0) && (pin < (A0 + NUM_ANALOG_INPUTS));
+#else
+  for (uint32_t i = 0; i < NUM_ANALOG_INPUTS; i++) {
+    if (analogInputPin[i] == pin) {
+      ret = true;
+      break;
+    }
+  }
+#endif /* NUM_ANALOG_LAST */
+#endif /* NUM_ANALOG_INPUTS > 0 */
+  return ret;
+}
+
+uint32_t digitalPinToAnalogInput(uint32_t pin)
+{
+  uint32_t ret = NUM_ANALOG_INPUTS;
+#if NUM_ANALOG_INPUTS > 0
+#ifndef NUM_ANALOG_LAST
+  ret = pin - A0;
+#else
+  for (uint32_t i = 0; i < NUM_ANALOG_INPUTS; i++) {
+    if (analogInputPin[i] == pin) {
+      ret = i;
+      break;
+    }
+  }
+#endif /* NUM_ANALOG_LAST */
+#endif /* NUM_ANALOG_INPUTS > 0 */
+  return ret;
 }
 
 #ifdef __cplusplus

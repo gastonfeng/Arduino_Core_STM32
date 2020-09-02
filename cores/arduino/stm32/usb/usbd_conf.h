@@ -12,7 +12,7 @@
   * This software component is licensed by ST under Ultimate Liberty license
   * SLA0044, the "License"; You may not use this file except in compliance with
   * the License. You may obtain a copy of the License at:
-  *                      http://www.st.com/SLA0044
+  *                      www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -73,13 +73,39 @@ extern "C" {
 #define USBD_MAX_NUM_INTERFACES             2U
 #endif /* USBD_MAX_NUM_INTERFACES */
 
+#ifndef USBD_MAX_NUM_CONFIGURATION
+#define USBD_MAX_NUM_CONFIGURATION          1U
+#endif /* USBD_MAX_NUM_CONFIGURATION */
+
 #ifndef USBD_MAX_STR_DESC_SIZ
 #define USBD_MAX_STR_DESC_SIZ               0x100U
 #endif /* USBD_MAX_STR_DESC_SIZ */
 
+#ifndef USBD_SELF_POWERED
+#define USBD_SELF_POWERED                   1U
+#endif /* USBD_SELF_POWERED */
+
 #ifndef USBD_DEBUG_LEVEL
 #define USBD_DEBUG_LEVEL                    0U
 #endif /* USBD_DEBUG_LEVEL */
+
+/* ECM, RNDIS, DFU Class Config */
+#ifndef USBD_SUPPORT_USER_STRING_DESC
+#define USBD_SUPPORT_USER_STRING_DESC       0U
+#endif /* USBD_SUPPORT_USER_STRING_DESC */
+
+/* BillBoard Class Config */
+#ifndef USBD_CLASS_USER_STRING_DESC
+#define USBD_CLASS_USER_STRING_DESC         1U
+#endif /* USBD_CLASS_USER_STRING_DESC */
+
+#ifndef USBD_CLASS_BOS_ENABLED
+#define USBD_CLASS_BOS_ENABLED              0U
+#endif /* USBD_CLASS_BOS_ENABLED */
+
+#ifndef USB_BB_MAX_NUM_ALT_MODE
+#define USB_BB_MAX_NUM_ALT_MODE             0x2U
+#endif /* USB_BB_MAX_NUM_ALT_MODE */
 
 /* MSC Class Config */
 #ifndef MSC_MEDIA_PACKET
@@ -125,6 +151,9 @@ extern "C" {
 #ifndef USBD_memcpy
 #define USBD_memcpy               memcpy
 #endif /* USBD_memcpy */
+#ifndef USBD_Delay
+#define USBD_Delay                HAL_Delay
+#endif /* USBD_Delay */
 
 /* DEBUG macros */
 #if (USBD_DEBUG_LEVEL > 0U)

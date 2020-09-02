@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -69,8 +69,12 @@ extern "C" {
                                                (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSE)  == RCC_OSCILLATORTYPE_LSE))
 
 
+#if defined(RCC_CR_HSEBYP)
 #define IS_RCC_HSE(__HSE__)  (((__HSE__) == RCC_HSE_OFF) || ((__HSE__) == RCC_HSE_ON) || \
                               ((__HSE__) == RCC_HSE_BYPASS))
+#else
+#define IS_RCC_HSE(__HSE__)  (((__HSE__) == RCC_HSE_OFF) || ((__HSE__) == RCC_HSE_ON))
+#endif
 
 #define IS_RCC_LSE(__LSE__)  (((__LSE__) == RCC_LSE_OFF) || ((__LSE__) == RCC_LSE_ON) || \
                               ((__LSE__) == RCC_LSE_BYPASS))
@@ -101,9 +105,16 @@ extern "C" {
                                       ((__SOURCE__) == RCC_PLLSOURCE_HSI)  || \
                                       ((__SOURCE__) == RCC_PLLSOURCE_HSE))
 
-#define IS_RCC_PLLM_VALUE(__VALUE__) ((__VALUE__) <= RCC_PLLM_DIV8)
+#define IS_RCC_PLLM_VALUE(__VALUE__) (((__VALUE__) == RCC_PLLM_DIV1)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV2)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV3)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV4)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV5)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV6)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV7)  || \
+                                      ((__VALUE__) == RCC_PLLM_DIV8))
 
-#define IS_RCC_PLLN_VALUE(__VALUE__) ((8U <= (__VALUE__)) && ((__VALUE__) <= 86U))
+#define IS_RCC_PLLN_VALUE(__VALUE__) ((6U <= (__VALUE__)) && ((__VALUE__) <= 127U))
 
 #define IS_RCC_PLLP_VALUE(__VALUE__) ((RCC_PLLP_DIV2 <= (__VALUE__)) && ((__VALUE__) <= RCC_PLLP_DIV32))
 
@@ -111,12 +122,12 @@ extern "C" {
 
 #define IS_RCC_PLLR_VALUE(__VALUE__) ((RCC_PLLR_DIV2 <= (__VALUE__)) && ((__VALUE__) <= RCC_PLLR_DIV8))
 
+#if defined(SAI1)
 #define IS_RCC_PLLSAI1CLOCKOUT_VALUE(__VALUE__) (((((__VALUE__) & RCC_PLLSAI1_ADCCLK) == RCC_PLLSAI1_ADCCLK) || \
-                                                (((__VALUE__) & RCC_PLLSAI1_SAI1CLK) == RCC_PLLSAI1_SAI1CLK)  || \
-                                                (((__VALUE__) & RCC_PLLSAI1_USBCLK) == RCC_PLLSAI1_USBCLK)  || \
-                                                (((__VALUE__) & RCC_PLLSAI1_RNGCLK) == RCC_PLLSAI1_RNGCLK)) && \
-                                                (((__VALUE__) & ~(RCC_PLLSAI1_ADCCLK|RCC_PLLSAI1_SAI1CLK|RCC_PLLSAI1_USBCLK|RCC_PLLSAI1_RNGCLK)) == 0U))
-
+    (((__VALUE__) & RCC_PLLSAI1_SAI1CLK) == RCC_PLLSAI1_SAI1CLK) || \
+    (((__VALUE__) & RCC_PLLSAI1_USBCLK)  == RCC_PLLSAI1_USBCLK)) && \
+    (((__VALUE__) & ~(RCC_PLLSAI1_ADCCLK | RCC_PLLSAI1_SAI1CLK | RCC_PLLSAI1_USBCLK)) == 0U))
+#endif
 #define IS_RCC_MSI_CLOCK_RANGE(__RANGE__) (((__RANGE__) == RCC_MSIRANGE_0)  || \
                                            ((__RANGE__) == RCC_MSIRANGE_1)  || \
                                            ((__RANGE__) == RCC_MSIRANGE_2)  || \
@@ -157,7 +168,14 @@ extern "C" {
                                          ((__SOURCE__) == RCC_RTCCLKSOURCE_LSI) || \
                                          ((__SOURCE__) == RCC_RTCCLKSOURCE_HSE_DIV32))
 
-#define IS_RCC_MCO(__MCOX__) ( ((__MCOX__) == RCC_MCO1) || ((__MCOX__) == RCC_MCO2) || ((__MCOX__) == RCC_MCO3) )
+#if defined(RCC_MCO3_SUPPORT)
+#define IS_RCC_MCO(__MCOX__) (((__MCOX__) == RCC_MCO1) || \
+                              ((__MCOX__) == RCC_MCO2) || \
+                              ((__MCOX__) == RCC_MCO3))
+#else
+#define IS_RCC_MCO(__MCOX__) (((__MCOX__) == RCC_MCO1) || \
+                              ((__MCOX__) == RCC_MCO2))
+#endif
 
 #define IS_RCC_MCO1SOURCE(__SOURCE__) (((__SOURCE__) == RCC_MCO1SOURCE_NOCLOCK) || \
                                        ((__SOURCE__) == RCC_MCO1SOURCE_SYSCLK) || \
@@ -204,7 +222,7 @@ extern "C" {
 typedef struct
 {
   uint32_t PLLState;   /*!< The new state of the PLL.
-                            This parameter can be a value of @ref RCC_PLL_Config                      */
+                            This parameter must be a value of @ref RCC_PLL_Config                                 */
 
   uint32_t PLLSource;  /*!< RCC_PLLSource: PLL entry clock source.
                             This parameter must be a value of @ref RCC_PLL_Clock_Source               */
@@ -213,7 +231,7 @@ typedef struct
                             This parameter must be a value of @ref RCC_PLLM_Clock_Divider             */
 
   uint32_t PLLN;       /*!< PLLN: Multiplication factor for PLL VCO output clock.
-                            This parameter must be a number between Min_Data = 8 and Max_Data = 86    */
+                            This parameter must be a number between Min_Data = 6 and Max_Data = 127    */
 
   uint32_t PLLP;       /*!< PLLP: Division factor for SAI & ADC clock.
                             This parameter must be a value of @ref RCC_PLLP_Clock_Divider             */
@@ -233,7 +251,7 @@ typedef struct
 typedef struct
 {
   uint32_t OscillatorType;       /*!< The oscillators to be configured.
-                                      This parameter can be a value of @ref RCC_Oscillator_Type                   */
+                                      This parameter can be a combination of @ref RCC_Oscillator_Type             */
 
   uint32_t HSEState;             /*!< The new state of the HSE.
                                       This parameter can be a value of @ref RCC_HSE_Config                        */
@@ -269,7 +287,7 @@ typedef struct
 } RCC_OscInitTypeDef;
 
 /**
-  * @brief  RCC System, AHB and APB busses clock configuration structure definition
+  * @brief  RCC System, AHB and APB buses clock configuration structure definition
   */
 typedef struct
 {
@@ -334,7 +352,9 @@ typedef struct
   */
 #define RCC_HSE_OFF                    0x00000000U                                /*!< HSE clock deactivation               */
 #define RCC_HSE_ON                     RCC_CR_HSEON                               /*!< HSE clock activation                 */
+#if defined(RCC_CR_HSEBYP)
 #define RCC_HSE_BYPASS                 ((uint32_t)(RCC_CR_HSEBYP | RCC_CR_HSEON)) /*!< External clock source for HSE clock  */
+#endif
 /**
   * @}
   */
@@ -499,22 +519,28 @@ typedef struct
 #define RCC_PLL_SYSCLK                 RCC_PLLCFGR_PLLREN      /*!< PLLCLK selection from main PLL */
 #define RCC_PLL_USBCLK                 RCC_PLLCFGR_PLLQEN      /*!< PLLUSBCLK selection from main PLL */
 #define RCC_PLL_RNGCLK                 RCC_PLLCFGR_PLLQEN      /*!< PLLRNGCLK selection from main PLL */
+#if defined(SAI1)
 #define RCC_PLL_SAI1CLK                RCC_PLLCFGR_PLLPEN      /*!< PLLSAI1CLK selection from main PLL */
+#endif
 #define RCC_PLL_ADCCLK                 RCC_PLLCFGR_PLLPEN      /*!< PLLADCCLK selection from main PLL */
+#if defined(SPI_I2S_SUPPORT)
+#define RCC_PLL_I2SCLK                 RCC_PLLCFGR_PLLPEN      /*!< PLLI2SCLK selection from main PLL */
+#endif
 /**
   * @}
   */
 
+#if defined(SAI1)
 /** @defgroup RCC_PLLSAI1_Clock_Output PLLSAI1 Clock Output
   * @{
   */
 #define RCC_PLLSAI1_ADCCLK             RCC_PLLSAI1CFGR_PLLREN        /*!< PLLADCCLK selection from PLLSAI1 */
 #define RCC_PLLSAI1_USBCLK             RCC_PLLSAI1CFGR_PLLQEN        /*!< USBCLK selection from PLLSAI1 */
-#define RCC_PLLSAI1_RNGCLK             RCC_PLLSAI1CFGR_PLLQEN       /*!< RNGCLK selection from PLLSAI1 */
 #define RCC_PLLSAI1_SAI1CLK            RCC_PLLSAI1CFGR_PLLPEN       /*!< PLLSAI1CLK selection from PLLSAI1 */
 /**
   * @}
   */
+#endif
 
 /** @defgroup RCC_MSI_Clock_Range MSI Clock Range
   * @{
@@ -619,7 +645,9 @@ typedef struct
   */
 #define RCC_MCO1                       0x00000000U          /*!< MCO1 index */
 #define RCC_MCO2                       0x00000001U          /*!< MCO2 index */
+#if defined(RCC_MCO3_SUPPORT)
 #define RCC_MCO3                       0x00000002U          /*!< MCO3 index */
+#endif
 
 #define RCC_MCO                        RCC_MCO1             /*!< MCO1 to be compliant with other families with 1 MCO*/
 /**
@@ -693,7 +721,9 @@ typedef struct
 #define RCC_IT_HSIRDY                  LL_RCC_CIFR_HSIRDYF      /*!< HSI Ready Interrupt flag */
 #define RCC_IT_HSERDY                  LL_RCC_CIFR_HSERDYF      /*!< HSE Ready Interrupt flag */
 #define RCC_IT_PLLRDY                  LL_RCC_CIFR_PLLRDYF      /*!< PLL Ready Interrupt flag */
+#if defined(SAI1)
 #define RCC_IT_PLLSAI1RDY              LL_RCC_CIFR_PLLSAI1RDYF  /*!< PLLSAI1 Ready Interrupt flag */
+#endif
 #define RCC_IT_HSECSS                  LL_RCC_CIFR_CSSF         /*!< HSE Clock Security System Interrupt flag */
 #define RCC_IT_LSECSS                  LL_RCC_CIFR_LSECSSF      /*!< LSE Clock Security System Interrupt flag */
 #define RCC_IT_HSI48RDY                LL_RCC_CIFR_HSI48RDYF    /*!< HSI48 Ready Interrupt flag */
@@ -717,7 +747,9 @@ typedef struct
 #define RCC_FLAG_HSIRDY                ((CR_REG_INDEX << 5U) | RCC_CR_HSIRDY_Pos)      /*!< HSI Ready flag */
 #define RCC_FLAG_HSERDY                ((CR_REG_INDEX << 5U) | RCC_CR_HSERDY_Pos)      /*!< HSE Ready flag */
 #define RCC_FLAG_PLLRDY                ((CR_REG_INDEX << 5U) | RCC_CR_PLLRDY_Pos)      /*!< PLL Ready flag */
+#if defined(SAI1)
 #define RCC_FLAG_PLLSAI1RDY            ((CR_REG_INDEX << 5U) | RCC_CR_PLLSAI1RDY_Pos)  /*!< PLLSAI1 Ready flag */
+#endif
 
 /* Flags in the BDCR register */
 #define RCC_FLAG_LSERDY                ((BDCR_REG_INDEX << 5U) | RCC_BDCR_LSERDY_Pos)  /*!< LSE Ready flag */
@@ -780,17 +812,24 @@ typedef struct
   */
 
 #define __HAL_RCC_DMA1_CLK_ENABLE()            LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_CLK_ENABLE()            LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_CLK_ENABLE()         LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_CRC_CLK_ENABLE()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_CLK_ENABLE()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_DMA1_CLK_DISABLE()           LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_CLK_DISABLE()           LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_CLK_DISABLE()        LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_CRC_CLK_DISABLE()            LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_CLK_DISABLE()            LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_TSC)
-
+#endif
 /**
   * @}
   */
@@ -806,22 +845,30 @@ typedef struct
 #define __HAL_RCC_GPIOA_CLK_ENABLE()           LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_CLK_ENABLE()           LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_CLK_ENABLE()           LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_CLK_ENABLE()           LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_CLK_ENABLE()           LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_CLK_ENABLE()           LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOH)
 
 #define __HAL_RCC_ADC_CLK_ENABLE()             LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_AES1_CLK_ENABLE()            LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_AES1)
-
+#endif
 #define __HAL_RCC_GPIOA_CLK_DISABLE()          LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_CLK_DISABLE()          LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_CLK_DISABLE()          LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_CLK_DISABLE()          LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_CLK_DISABLE()          LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_CLK_DISABLE()          LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_GPIOH)
 
 #define __HAL_RCC_ADC_CLK_DISABLE()            LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_ADC)
+
+#if defined(AES1)
 #define __HAL_RCC_AES1_CLK_DISABLE()           LL_AHB2_GRP1_DisableClock(LL_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 /**
   * @}
@@ -835,7 +882,9 @@ typedef struct
   * @{
   */
 
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_CLK_ENABLE()         LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_CLK_ENABLE()             LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_CLK_ENABLE()            LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_CLK_ENABLE()             LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_RNG)
@@ -843,7 +892,9 @@ typedef struct
 #define __HAL_RCC_IPCC_CLK_ENABLE()            LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC)
 #define __HAL_RCC_FLASH_CLK_ENABLE()           LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_FLASH)
 
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_CLK_DISABLE()        LL_AHB3_GRP1_DisableClock(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_CLK_DISABLE()            LL_AHB3_GRP1_DisableClock(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_CLK_DISABLE()           LL_AHB3_GRP1_DisableClock(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_CLK_DISABLE()            LL_AHB3_GRP1_DisableClock(LL_AHB3_GRP1_PERIPH_RNG)
@@ -866,29 +917,52 @@ typedef struct
 #define __HAL_RCC_RTCAPB_CLK_ENABLE()          LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_WWDG_CLK_ENABLE()            LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_WWDG)
 #define __HAL_RCC_TIM2_CLK_ENABLE()            LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_CLK_ENABLE()             LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_CLK_ENABLE()            LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_CLK_ENABLE()            LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_CLK_ENABLE()            LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_CLK_ENABLE()             LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_CLK_ENABLE()             LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_CLK_ENABLE()          LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_LPTIM1)
 #define __HAL_RCC_LPTIM2_CLK_ENABLE()          LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPTIM2)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_CLK_ENABLE()         LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPUART1)
+#endif
 
 #define __HAL_RCC_RTCAPB_CLK_DISABLE()         LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_TIM2_CLK_DISABLE()           LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_CLK_DISABLE()            LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_CLK_DISABLE()           LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_CLK_DISABLE()           LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_CLK_DISABLE()           LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_CLK_DISABLE()            LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_CLK_DISABLE()            LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_CLK_DISABLE()         LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_LPTIM2_CLK_DISABLE()         LL_APB1_GRP2_DisableClock(LL_APB1_GRP2_PERIPH_LPTIM2)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_CLK_DISABLE()        LL_APB1_GRP2_DisableClock(LL_APB1_GRP2_PERIPH_LPUART1)
-
+#endif
 
 /**
   * @}
@@ -907,14 +981,18 @@ typedef struct
 #define __HAL_RCC_USART1_CLK_ENABLE()          LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_CLK_ENABLE()            LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_TIM1_CLK_DISABLE()           LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM1)
 #define __HAL_RCC_SPI1_CLK_DISABLE()           LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_SPI1)
 #define __HAL_RCC_USART1_CLK_DISABLE()         LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_CLK_DISABLE()          LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_CLK_DISABLE()          LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_CLK_DISABLE()           LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 /**
   * @}
@@ -929,16 +1007,24 @@ typedef struct
   */
 
 #define __HAL_RCC_DMA1_IS_CLK_ENABLED()        LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_IS_CLK_ENABLED()        LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_IS_CLK_ENABLED()     LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_CRC_IS_CLK_ENABLED()         LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_IS_CLK_ENABLED()         LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_DMA1_IS_CLK_DISABLED()       !(LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_DMA1))
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_IS_CLK_DISABLED()       !(LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_DMA2))
+#endif
 #define __HAL_RCC_DMAMUX1_IS_CLK_DISABLED()    !(LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_DMAMUX1))
 #define __HAL_RCC_CRC_IS_CLK_DISABLED()        !(LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_CRC))
+#if defined(TSC)
 #define __HAL_RCC_TSC_IS_CLK_DISABLED()        !(LL_AHB1_GRP1_IsEnabledClock(LL_AHB1_GRP1_PERIPH_TSC))
+#endif
 
 /**
   * @}
@@ -955,22 +1041,28 @@ typedef struct
 #define __HAL_RCC_GPIOA_IS_CLK_ENABLED()       LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_IS_CLK_ENABLED()       LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_IS_CLK_ENABLED()       LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_IS_CLK_ENABLED()       LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_IS_CLK_ENABLED()       LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_IS_CLK_ENABLED()       LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_ADC_IS_CLK_ENABLED()         LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_AES1_IS_CLK_ENABLED()        LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_GPIOA_IS_CLK_DISABLED()      !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOA))
 #define __HAL_RCC_GPIOB_IS_CLK_DISABLED()      !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOB))
 #define __HAL_RCC_GPIOC_IS_CLK_DISABLED()      !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOC))
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_IS_CLK_DISABLED()      !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOD))
+#endif
 #define __HAL_RCC_GPIOE_IS_CLK_DISABLED()      !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOE))
 #define __HAL_RCC_GPIOH_IS_CLK_DISABLED()      !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_GPIOH))
 #define __HAL_RCC_ADC_IS_CLK_DISABLED()        !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_ADC))
+#if defined(AES1)
 #define __HAL_RCC_AES1_IS_CLK_DISABLED()       !(LL_AHB2_GRP1_IsEnabledClock(LL_AHB2_GRP1_PERIPH_AES1))
-
-
+#endif
 
 /**
   * @}
@@ -984,7 +1076,9 @@ typedef struct
   * @{
   */
 
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_IS_CLK_ENABLED()      LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_IS_CLK_ENABLED()          LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_IS_CLK_ENABLED()         LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_IS_CLK_ENABLED()          LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_RNG)
@@ -992,7 +1086,9 @@ typedef struct
 #define __HAL_RCC_IPCC_IS_CLK_ENABLED()         LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_IPCC)
 #define __HAL_RCC_FLASH_IS_CLK_ENABLED()        LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_FLASH)
 
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_IS_CLK_DISABLED()     !(LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_QUADSPI))
+#endif
 #define __HAL_RCC_PKA_IS_CLK_DISABLED()         !(LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_PKA))
 #define __HAL_RCC_AES2_IS_CLK_DISABLED()        !(LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_AES2))
 #define __HAL_RCC_RNG_IS_CLK_DISABLED()         !(LL_AHB3_GRP1_IsEnabledClock(LL_AHB3_GRP1_PERIPH_RNG))
@@ -1015,30 +1111,54 @@ typedef struct
 #define __HAL_RCC_RTCAPB_IS_CLK_ENABLED()         LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_WWDG_IS_CLK_ENABLED()           LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_WWDG)
 #define __HAL_RCC_TIM2_IS_CLK_ENABLED()           LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_IS_CLK_ENABLED()            LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_IS_CLK_ENABLED()           LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_IS_CLK_ENABLED()           LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_IS_CLK_ENABLED()           LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_IS_CLK_ENABLED()            LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_IS_CLK_ENABLED()            LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_IS_CLK_ENABLED()         LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_LPTIM2_IS_CLK_ENABLED()         LL_APB1_GRP2_IsEnabledClock(LL_APB1_GRP2_PERIPH_LPTIM2)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_IS_CLK_ENABLED()        LL_APB1_GRP2_IsEnabledClock(LL_APB1_GRP2_PERIPH_LPUART1)
+#endif
 
 #define __HAL_RCC_RTCAPB_IS_CLK_DISABLED()        !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_RTCAPB))
 #define __HAL_RCC_WWDG_IS_CLK_DISABLED()          !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_WWDG))
 #define __HAL_RCC_TIM2_IS_CLK_DISABLED()          !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_TIM2))
+#if defined(LCD)
 #define __HAL_RCC_LCD_IS_CLK_DISABLED()           !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_LCD))
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_IS_CLK_DISABLED()          !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_SPI2))
+#endif
 #define __HAL_RCC_I2C1_IS_CLK_DISABLED()          !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_I2C1))
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_IS_CLK_DISABLED()          !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_I2C3))
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_IS_CLK_DISABLED()           !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_CRS))
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_IS_CLK_DISABLED()           !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_USB))
+#endif
 #define __HAL_RCC_LPTIM1_IS_CLK_DISABLED()        !(LL_APB1_GRP1_IsEnabledClock(LL_APB1_GRP1_PERIPH_LPTIM1))
 
 #define __HAL_RCC_LPTIM2_IS_CLK_DISABLED()        !(LL_APB1_GRP2_IsEnabledClock(LL_APB1_GRP2_PERIPH_LPTIM2))
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_IS_CLK_DISABLED()       !(LL_APB1_GRP2_IsEnabledClock(LL_APB1_GRP2_PERIPH_LPUART1))
+#endif
 
 /**
   * @}
@@ -1057,7 +1177,9 @@ typedef struct
 #define __HAL_RCC_USART1_IS_CLK_ENABLED()         LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_IS_CLK_ENABLED()          LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_IS_CLK_ENABLED()          LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_IS_CLK_ENABLED()           LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 
 #define __HAL_RCC_TIM1_IS_CLK_DISABLED()          !(LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_TIM1))
@@ -1065,7 +1187,9 @@ typedef struct
 #define __HAL_RCC_USART1_IS_CLK_DISABLED()        !(LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_USART1))
 #define __HAL_RCC_TIM16_IS_CLK_DISABLED()         !(LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_TIM16))
 #define __HAL_RCC_TIM17_IS_CLK_DISABLED()         !(LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_TIM17))
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_IS_CLK_DISABLED()          !(LL_APB2_GRP1_IsEnabledClock(LL_APB2_GRP1_PERIPH_SAI1))
+#endif
 
 /**
   * @}
@@ -1080,18 +1204,26 @@ typedef struct
   */
 
 #define __HAL_RCC_C2DMA1_CLK_ENABLE()            LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_CLK_ENABLE()            LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_C2DMAMUX1_CLK_ENABLE()         LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_C2SRAM1_CLK_ENABLE()           LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_SRAM1)
 #define __HAL_RCC_C2CRC_CLK_ENABLE()             LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_CLK_ENABLE()             LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_C2DMA1_CLK_DISABLE()           LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_CLK_DISABLE()           LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_C2DMAMUX1_CLK_DISABLE()        LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_C2SRAM1_CLK_DISABLE()          LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_SRAM1)
 #define __HAL_RCC_C2CRC_CLK_DISABLE()            LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_CLK_DISABLE()            LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 /**
   * @}
@@ -1108,20 +1240,28 @@ typedef struct
 #define __HAL_RCC_C2GPIOA_CLK_ENABLE()           LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_C2GPIOB_CLK_ENABLE()           LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_C2GPIOC_CLK_ENABLE()           LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_CLK_ENABLE()           LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_C2GPIOE_CLK_ENABLE()           LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_C2GPIOH_CLK_ENABLE()           LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_C2ADC_CLK_ENABLE()             LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_CLK_ENABLE()            LL_C2_AHB2_GRP1_EnableClock(LL_C2_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_C2GPIOA_CLK_DISABLE()          LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_C2GPIOB_CLK_DISABLE()          LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_C2GPIOC_CLK_DISABLE()          LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_CLK_DISABLE()          LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_C2GPIOE_CLK_DISABLE()          LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_C2GPIOH_CLK_DISABLE()          LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_C2ADC_CLK_DISABLE()            LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_CLK_DISABLE()           LL_C2_AHB2_GRP1_DisableClock(LL_C2_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 /**
   * @}
@@ -1163,29 +1303,53 @@ typedef struct
 
 #define __HAL_RCC_C2RTCAPB_CLK_ENABLE()          LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_C2TIM2_CLK_ENABLE()            LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_CLK_ENABLE()             LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_CLK_ENABLE()            LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_C2I2C1_CLK_ENABLE()            LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_CLK_ENABLE()            LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_CLK_ENABLE()             LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_CLK_ENABLE()             LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_C2LPTIM1_CLK_ENABLE()          LL_C2_APB1_GRP1_EnableClock(LL_C2_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_C2LPTIM2_CLK_ENABLE()          LL_C2_APB1_GRP2_EnableClock(LL_C2_APB1_GRP2_PERIPH_LPTIM2)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_CLK_ENABLE()         LL_C2_APB1_GRP2_EnableClock(LL_C2_APB1_GRP2_PERIPH_LPUART1)
+#endif
 
 #define __HAL_RCC_C2RTCAPB_CLK_DISABLE()         LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_C2TIM2_CLK_DISABLE()           LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_CLK_DISABLE()            LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_CLK_DISABLE()           LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_C2I2C1_CLK_DISABLE()           LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_CLK_DISABLE()           LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_CLK_DISABLE()            LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_CLK_DISABLE()            LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_C2LPTIM1_CLK_DISABLE()         LL_C2_APB1_GRP1_DisableClock(LL_C2_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_C2LPTIM2_CLK_DISABLE()         LL_C2_APB1_GRP2_DisableClock(LL_C2_APB1_GRP2_PERIPH_LPTIM2)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_CLK_DISABLE()        LL_C2_APB1_GRP2_DisableClock(LL_C2_APB1_GRP2_PERIPH_LPUART1)
+#endif
 
 /**
   * @}
@@ -1204,14 +1368,18 @@ typedef struct
 #define __HAL_RCC_C2USART1_CLK_ENABLE()          LL_C2_APB2_GRP1_EnableClock(LL_C2_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_C2TIM16_CLK_ENABLE()           LL_C2_APB2_GRP1_EnableClock(LL_C2_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_C2TIM17_CLK_ENABLE()           LL_C2_APB2_GRP1_EnableClock(LL_C2_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_CLK_ENABLE()            LL_C2_APB2_GRP1_EnableClock(LL_C2_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_C2TIM1_CLK_DISABLE()           LL_C2_APB2_GRP1_DisableClock(LL_C2_APB2_GRP1_PERIPH_TIM1)
 #define __HAL_RCC_C2SPI1_CLK_DISABLE()           LL_C2_APB2_GRP1_DisableClock(LL_C2_APB2_GRP1_PERIPH_SPI1)
 #define __HAL_RCC_C2USART1_CLK_DISABLE()         LL_C2_APB2_GRP1_DisableClock(LL_C2_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_C2TIM16_CLK_DISABLE()          LL_C2_APB2_GRP1_DisableClock(LL_C2_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_C2TIM17_CLK_DISABLE()          LL_C2_APB2_GRP1_DisableClock(LL_C2_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_CLK_DISABLE()           LL_C2_APB2_GRP1_DisableClock(LL_C2_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 /**
   * @}
@@ -1245,18 +1413,26 @@ typedef struct
   */
 
 #define __HAL_RCC_C2DMA1_IS_CLK_ENABLED()        LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_IS_CLK_ENABLED()        LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_C2DMAMUX1_IS_CLK_ENABLED()     LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_C2SRAM1_IS_CLK_ENABLED()       LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_SRAM1)
 #define __HAL_RCC_C2CRC_IS_CLK_ENABLED()         LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_IS_CLK_ENABLED()         LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_C2DMA1_IS_CLK_DISABLED()       !(LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_DMA1))
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_IS_CLK_DISABLED()       !(LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_DMA2))
+#endif
 #define __HAL_RCC_C2DMAMUX1_IS_CLK_DISABLED()    !(LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_DMAMUX1))
 #define __HAL_RCC_C2SRAM1_IS_CLK_DISABLED()      !(LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_SRAM1))
 #define __HAL_RCC_C2CRC_IS_CLK_DISABLED()        !(LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_CRC))
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_IS_CLK_DISABLED()        !(LL_C2_AHB1_GRP1_IsEnabledClock(LL_C2_AHB1_GRP1_PERIPH_TSC))
+#endif
 
 /**
   * @}
@@ -1273,20 +1449,28 @@ typedef struct
 #define __HAL_RCC_C2GPIOA_IS_CLK_ENABLED()       LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_C2GPIOB_IS_CLK_ENABLED()       LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_C2GPIOC_IS_CLK_ENABLED()       LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_IS_CLK_ENABLED()       LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_C2GPIOE_IS_CLK_ENABLED()       LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_C2GPIOH_IS_CLK_ENABLED()       LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_C2ADC_IS_CLK_ENABLED()         LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_IS_CLK_ENABLED()        LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_C2GPIOA_IS_CLK_DISABLED()      !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOA))
 #define __HAL_RCC_C2GPIOB_IS_CLK_DISABLED()      !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOB))
 #define __HAL_RCC_C2GPIOC_IS_CLK_DISABLED()      !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOC))
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_IS_CLK_DISABLED()      !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOD))
+#endif
 #define __HAL_RCC_C2GPIOE_IS_CLK_DISABLED()      !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOE))
 #define __HAL_RCC_C2GPIOH_IS_CLK_DISABLED()      !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_GPIOH))
 #define __HAL_RCC_C2ADC_IS_CLK_DISABLED()        !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_ADC))
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_IS_CLK_DISABLED()       !(LL_C2_AHB2_GRP1_IsEnabledClock(LL_C2_AHB2_GRP1_PERIPH_AES1))
+#endif
 
 /**
   * @}
@@ -1328,29 +1512,53 @@ typedef struct
 
 #define __HAL_RCC_C2RTCAPB_IS_CLK_ENABLED()         LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_C2TIM2_IS_CLK_ENABLED()           LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_IS_CLK_ENABLED()            LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_IS_CLK_ENABLED()           LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_C2I2C1_IS_CLK_ENABLED()           LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_IS_CLK_ENABLED()           LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_IS_CLK_ENABLED()            LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_IS_CLK_ENABLED()            LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_C2LPTIM1_IS_CLK_ENABLED()         LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_C2LPTIM2_IS_CLK_ENABLED()         LL_C2_APB1_GRP2_IsEnabledClock(LL_C2_APB1_GRP2_PERIPH_LPTIM2)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_IS_CLK_ENABLED()        LL_C2_APB1_GRP2_IsEnabledClock(LL_C2_APB1_GRP2_PERIPH_LPUART1)
+#endif
 
 #define __HAL_RCC_C2RTCAPB_IS_CLK_DISABLED()       !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_RTCAPB))
 #define __HAL_RCC_C2TIM2_IS_CLK_DISABLED()         !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_TIM2))
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_IS_CLK_DISABLED()          !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_LCD))
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_IS_CLK_DISABLED()         !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_SPI2))
+#endif
 #define __HAL_RCC_C2I2C1_IS_CLK_DISABLED()         !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_I2C1))
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_IS_CLK_DISABLED()         !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_I2C3))
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_IS_CLK_DISABLED()          !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_CRS))
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_IS_CLK_DISABLED()          !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_USB))
+#endif
 #define __HAL_RCC_C2LPTIM1_IS_CLK_DISABLED()       !(LL_C2_APB1_GRP1_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_LPTIM1))
 
 #define __HAL_RCC_C2LPTIM2_IS_CLK_DISABLED()       !(LL_C2_APB1_GRP2_IsEnabledClock(LL_C2_APB1_GRP2_PERIPH_LPTIM2))
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_IS_CLK_DISABLED()      !(LL_C2_APB1_GRP2_IsEnabledClock(LL_C2_APB1_GRP1_PERIPH_LPTIM1))
+#endif
 
 /**
   * @}
@@ -1369,14 +1577,18 @@ typedef struct
 #define __HAL_RCC_C2USART1_IS_CLK_ENABLED()         LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_C2TIM16_IS_CLK_ENABLED()          LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_C2TIM17_IS_CLK_ENABLED()          LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_IS_CLK_ENABLED()           LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_C2TIM1_IS_CLK_DISABLED()          !( LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_TIM1))
 #define __HAL_RCC_C2SPI1_IS_CLK_DISABLED()          !( LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_SPI1))
 #define __HAL_RCC_C2USART1_IS_CLK_DISABLED()        !( LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_USART1))
 #define __HAL_RCC_C2TIM16_IS_CLK_DISABLED()         !( LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_TIM16))
 #define __HAL_RCC_C2TIM17_IS_CLK_DISABLED()         !( LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_TIM17))
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_IS_CLK_DISABLED()          !( LL_C2_APB2_GRP1_IsEnabledClock(LL_C2_APB2_GRP1_PERIPH_SAI1))
+#endif
 
 /**
   * @}
@@ -1408,18 +1620,26 @@ typedef struct
   */
 #define __HAL_RCC_AHB1_FORCE_RESET()           LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_ALL)
 #define __HAL_RCC_DMA1_FORCE_RESET()           LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_FORCE_RESET()           LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_FORCE_RESET()        LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_CRC_FORCE_RESET()            LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_FORCE_RESET()            LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 
 #define __HAL_RCC_AHB1_RELEASE_RESET()         LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_ALL)
 #define __HAL_RCC_DMA1_RELEASE_RESET()         LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_RELEASE_RESET()         LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_RELEASE_RESET()      LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_CRC_RELEASE_RESET()          LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_RELEASE_RESET()          LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 
 /**
@@ -1434,21 +1654,29 @@ typedef struct
 #define __HAL_RCC_GPIOA_FORCE_RESET()          LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_FORCE_RESET()          LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_FORCE_RESET()          LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_FORCE_RESET()          LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_FORCE_RESET()          LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_FORCE_RESET()          LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_ADC_FORCE_RESET()            LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_AES1_FORCE_RESET()           LL_AHB2_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_AHB2_RELEASE_RESET()         LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_ALL)
 #define __HAL_RCC_GPIOA_RELEASE_RESET()        LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_RELEASE_RESET()        LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_RELEASE_RESET()        LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_RELEASE_RESET()        LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_RELEASE_RESET()        LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_RELEASE_RESET()        LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_ADC_RELEASE_RESET()          LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_AES1_RELEASE_RESET()         LL_AHB2_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 /**
   * @}
@@ -1459,7 +1687,9 @@ typedef struct
   * @{
   */
 #define __HAL_RCC_AHB3_FORCE_RESET()           LL_AHB3_GRP1_ForceReset(LL_AHB2_GRP1_PERIPH_ALL)
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_FORCE_RESET()        LL_AHB3_GRP1_ForceReset(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_FORCE_RESET()            LL_AHB3_GRP1_ForceReset(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_FORCE_RESET()           LL_AHB3_GRP1_ForceReset(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_FORCE_RESET()            LL_AHB3_GRP1_ForceReset(LL_AHB3_GRP1_PERIPH_RNG)
@@ -1468,7 +1698,9 @@ typedef struct
 #define __HAL_RCC_FLASH_FORCE_RESET()          LL_AHB3_GRP1_ForceReset(LL_AHB3_GRP1_PERIPH_FLASH)
 
 #define __HAL_RCC_AHB3_RELEASE_RESET()         LL_AHB3_GRP1_ReleaseReset(LL_AHB2_GRP1_PERIPH_ALL)
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_RELEASE_RESET()      LL_AHB3_GRP1_ReleaseReset(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_RELEASE_RESET()          LL_AHB3_GRP1_ReleaseReset(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_RELEASE_RESET()         LL_AHB3_GRP1_ReleaseReset(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_RELEASE_RESET()          LL_AHB3_GRP1_ReleaseReset(LL_AHB3_GRP1_PERIPH_RNG)
@@ -1486,16 +1718,28 @@ typedef struct
 
 #define __HAL_RCC_APB1L_FORCE_RESET()          LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_ALL)
 #define __HAL_RCC_TIM2_FORCE_RESET()           LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_FORCE_RESET()            LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_FORCE_RESET()           LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_FORCE_RESET()           LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_FORCE_RESET()           LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_FORCE_RESET()            LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_FORCE_RESET()            LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_FORCE_RESET()         LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_APB1H_FORCE_RESET()          LL_APB1_GRP2_ForceReset(LL_APB1_GRP2_PERIPH_ALL)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_FORCE_RESET()        LL_APB1_GRP2_ForceReset(LL_APB1_GRP2_PERIPH_LPUART1)
+#endif
 #define __HAL_RCC_LPTIM2_FORCE_RESET()         LL_APB1_GRP2_ForceReset(LL_APB1_GRP2_PERIPH_LPTIM2)
 
 #define __HAL_RCC_APB1_FORCE_RESET() do { \
@@ -1505,16 +1749,28 @@ typedef struct
 
 #define __HAL_RCC_APB1L_RELEASE_RESET()        LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_ALL)
 #define __HAL_RCC_TIM2_RELEASE_RESET()         LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_RELEASE_RESET()          LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LCD)
+#endif
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_RELEASE_RESET()         LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_RELEASE_RESET()         LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_RELEASE_RESET()         LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_RELEASE_RESET()          LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_RELEASE_RESET()          LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_RELEASE_RESET()       LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPTIM1)
 
 #define __HAL_RCC_APB1H_RELEASE_RESET()        LL_APB1_GRP2_ReleaseReset(LL_APB1_GRP2_PERIPH_ALL)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_RELEASE_RESET()      LL_APB1_GRP2_ReleaseReset(LL_APB1_GRP2_PERIPH_LPUART1)
+#endif
 #define __HAL_RCC_LPTIM2_RELEASE_RESET()       LL_APB1_GRP2_ReleaseReset(LL_APB1_GRP2_PERIPH_LPTIM2)
 
 #define __HAL_RCC_APB1_RELEASE_RESET() do { \
@@ -1535,7 +1791,9 @@ typedef struct
 #define __HAL_RCC_USART1_FORCE_RESET()         LL_APB2_GRP1_ForceReset(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_FORCE_RESET()          LL_APB2_GRP1_ForceReset(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_FORCE_RESET()          LL_APB2_GRP1_ForceReset(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_FORCE_RESET()           LL_APB2_GRP1_ForceReset(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_APB2_RELEASE_RESET()         LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_ALL)
 #define __HAL_RCC_TIM1_RELEASE_RESET()         LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_TIM1)
@@ -1543,7 +1801,9 @@ typedef struct
 #define __HAL_RCC_USART1_RELEASE_RESET()       LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_RELEASE_RESET()        LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_RELEASE_RESET()        LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_RELEASE_RESET()         LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 /**
   * @}
   */
@@ -1571,33 +1831,49 @@ typedef struct
   * @{
   */
 #define __HAL_RCC_DMA1_CLK_SLEEP_ENABLE()       LL_AHB1_GRP1_EnableClockSleep(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_CLK_SLEEP_ENABLE()       LL_AHB1_GRP1_EnableClockSleep(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_CLK_SLEEP_ENABLE()    LL_AHB1_GRP1_EnableClockSleep(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_SRAM1_CLK_SLEEP_ENABLE()      LL_AHB1_GRP1_EnableClockSleep(LL_AHB1_GRP1_PERIPH_SRAM1)
 #define __HAL_RCC_CRC_CLK_SLEEP_ENABLE()        LL_AHB1_GRP1_EnableClockSleep(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_CLK_SLEEP_ENABLE()        LL_AHB1_GRP1_EnableClockSleep(LL_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_DMA1_CLK_SLEEP_DISABLE()      LL_AHB1_GRP1_DisableClockSleep(LL_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_CLK_SLEEP_DISABLE()      LL_AHB1_GRP1_DisableClockSleep(LL_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_DMAMUX1_CLK_SLEEP_DISABLE()   LL_AHB1_GRP1_DisableClockSleep(LL_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_SRAM1_CLK_SLEEP_DISABLE()     LL_AHB1_GRP1_DisableClockSleep(LL_AHB1_GRP1_PERIPH_SRAM1)
 #define __HAL_RCC_CRC_CLK_SLEEP_DISABLE()       LL_AHB1_GRP1_DisableClockSleep(LL_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_TSC_CLK_SLEEP_DISABLE()       LL_AHB1_GRP1_DisableClockSleep(LL_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_C2DMA1_CLK_SLEEP_ENABLE()     LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_CLK_SLEEP_ENABLE()     LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_C2DMAMUX1_CLK_SLEEP_ENABLE()  LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_C2SRAM1_CLK_SLEEP_ENABLE()    LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_SRAM1)
 #define __HAL_RCC_C2CRC_CLK_SLEEP_ENABLE()      LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_CLK_SLEEP_ENABLE()      LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 #define __HAL_RCC_C2DMA1_CLK_SLEEP_DISABLE()    LL_C2_AHB1_GRP1_DisableClockSleep(LL_C2_AHB1_GRP1_PERIPH_DMA1)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_CLK_SLEEP_DISABLE()    LL_C2_AHB1_GRP1_DisableClockSleep(LL_C2_AHB1_GRP1_PERIPH_DMA2)
+#endif
 #define __HAL_RCC_C2DMAMUX1_CLK_SLEEP_DISABLE() LL_C2_AHB1_GRP1_DisableClockSleep(LL_C2_AHB1_GRP1_PERIPH_DMAMUX1)
 #define __HAL_RCC_C2SRAM1_CLK_SLEEP_DISABLE()   LL_C2_AHB1_GRP1_DisableClockSleep(LL_C2_AHB1_GRP1_PERIPH_SRAM1)
 
 #define __HAL_RCC_C2CRC_CLK_SLEEP_DISABLE()     LL_C2_AHB1_GRP1_DisableClockSleep(LL_C2_AHB1_GRP1_PERIPH_CRC)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_CLK_SLEEP_DISABLE()     LL_C2_AHB1_GRP1_DisableClockSleep(LL_C2_AHB1_GRP1_PERIPH_TSC)
+#endif
 
 /**
   * @}
@@ -1614,38 +1890,54 @@ typedef struct
 #define __HAL_RCC_GPIOA_CLK_SLEEP_ENABLE()     LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_CLK_SLEEP_ENABLE()     LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_CLK_SLEEP_ENABLE()     LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_CLK_SLEEP_ENABLE()     LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_CLK_SLEEP_ENABLE()     LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_CLK_SLEEP_ENABLE()     LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_ADC_CLK_SLEEP_ENABLE()       LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_AES1_CLK_SLEEP_ENABLE()      LL_AHB2_GRP1_EnableClockSleep(LL_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_GPIOA_CLK_SLEEP_DISABLE()    LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_GPIOB_CLK_SLEEP_DISABLE()    LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_GPIOC_CLK_SLEEP_DISABLE()    LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_CLK_SLEEP_DISABLE()    LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_GPIOE_CLK_SLEEP_DISABLE()    LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_GPIOH_CLK_SLEEP_DISABLE()    LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_ADC_CLK_SLEEP_DISABLE()      LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_AES1_CLK_SLEEP_DISABLE()     LL_AHB2_GRP1_DisableClockSleep(LL_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_C2GPIOA_CLK_SLEEP_ENABLE()   LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_C2GPIOB_CLK_SLEEP_ENABLE()   LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_C2GPIOC_CLK_SLEEP_ENABLE()   LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_CLK_SLEEP_ENABLE()   LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_C2GPIOE_CLK_SLEEP_ENABLE()   LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_C2GPIOH_CLK_SLEEP_ENABLE()   LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_C2ADC_CLK_SLEEP_ENABLE()     LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_CLK_SLEEP_ENABLE()    LL_C2_AHB2_GRP1_EnableClockSleep(LL_C2_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 #define __HAL_RCC_C2GPIOA_CLK_SLEEP_DISABLE()  LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOA)
 #define __HAL_RCC_C2GPIOB_CLK_SLEEP_DISABLE()  LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOB)
 #define __HAL_RCC_C2GPIOC_CLK_SLEEP_DISABLE()  LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOC)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_CLK_SLEEP_DISABLE()  LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOD)
+#endif
 #define __HAL_RCC_C2GPIOE_CLK_SLEEP_DISABLE()  LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOE)
 #define __HAL_RCC_C2GPIOH_CLK_SLEEP_DISABLE()  LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_GPIOH)
 #define __HAL_RCC_C2ADC_CLK_SLEEP_DISABLE()    LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_ADC)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_CLK_SLEEP_DISABLE()   LL_C2_AHB2_GRP1_DisableClockSleep(LL_C2_AHB2_GRP1_PERIPH_AES1)
+#endif
 
 /**
   * @}
@@ -1659,14 +1951,18 @@ typedef struct
   * @note   By default, all peripheral clocks are enabled during SLEEP mode.
   * @{
   */
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_CLK_SLEEP_ENABLE()   LL_AHB3_GRP1_EnableClockSleep(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_CLK_SLEEP_ENABLE()       LL_AHB3_GRP1_EnableClockSleep(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_CLK_SLEEP_ENABLE()      LL_AHB3_GRP1_EnableClockSleep(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_CLK_SLEEP_ENABLE()       LL_AHB3_GRP1_EnableClockSleep(LL_AHB3_GRP1_PERIPH_RNG)
 #define __HAL_RCC_SRAM2_CLK_SLEEP_ENABLE()     LL_AHB3_GRP1_EnableClockSleep(LL_AHB3_GRP1_PERIPH_SRAM2)
 #define __HAL_RCC_FLASH_CLK_SLEEP_ENABLE()     LL_AHB3_GRP1_EnableClockSleep(LL_AHB3_GRP1_PERIPH_FLASH)
 
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_CLK_SLEEP_DISABLE()  LL_AHB3_GRP1_DisableClockSleep(LL_AHB3_GRP1_PERIPH_QUADSPI)
+#endif
 #define __HAL_RCC_PKA_CLK_SLEEP_DISABLE()      LL_AHB3_GRP1_DisableClockSleep(LL_AHB3_GRP1_PERIPH_PKA)
 #define __HAL_RCC_AES2_CLK_SLEEP_DISABLE()     LL_AHB3_GRP1_DisableClockSleep(LL_AHB3_GRP1_PERIPH_AES2)
 #define __HAL_RCC_RNG_CLK_SLEEP_DISABLE()      LL_AHB3_GRP1_DisableClockSleep(LL_AHB3_GRP1_PERIPH_RNG)
@@ -1698,53 +1994,101 @@ typedef struct
   * @{
   */
 #define __HAL_RCC_TIM2_CLK_SLEEP_ENABLE()           LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_CLK_SLEEP_ENABLE()            LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_LCD)
+#endif
 #define __HAL_RCC_RTCAPB_CLK_SLEEP_ENABLE()         LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_WWDG_CLK_SLEEP_ENABLE()           LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_WWDG)
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_CLK_SLEEP_ENABLE()           LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_CLK_SLEEP_ENABLE()           LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_CLK_SLEEP_ENABLE()           LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_CLK_SLEEP_ENABLE()            LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_CLK_SLEEP_ENABLE()            LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_CLK_SLEEP_ENABLE()         LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_LPTIM1)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_CLK_SLEEP_ENABLE()        LL_APB1_GRP2_EnableClockSleep(LL_APB1_GRP2_PERIPH_LPUART1)
+#endif
 #define __HAL_RCC_LPTIM2_CLK_SLEEP_ENABLE()         LL_APB1_GRP2_EnableClockSleep(LL_APB1_GRP2_PERIPH_LPTIM2)
 
 #define __HAL_RCC_TIM2_CLK_SLEEP_DISABLE()          LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_LCD_CLK_SLEEP_DISABLE()           LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_LCD)
+#endif
 #define __HAL_RCC_RTCAPB_CLK_SLEEP_DISABLE()        LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_RTCAPB)
 #define __HAL_RCC_WWDG_CLK_SLEEP_DISABLE()          LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_WWDG)
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_CLK_SLEEP_DISABLE()          LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_I2C1_CLK_SLEEP_DISABLE()          LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_CLK_SLEEP_DISABLE()          LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_CRS_CLK_SLEEP_DISABLE()           LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_CLK_SLEEP_DISABLE()           LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_LPTIM1_CLK_SLEEP_DISABLE()        LL_APB1_GRP1_DisableClockSleep(LL_APB1_GRP1_PERIPH_LPTIM1)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_CLK_SLEEP_DISABLE()       LL_APB1_GRP2_DisableClockSleep(LL_APB1_GRP2_PERIPH_LPUART1)
+#endif
 #define __HAL_RCC_LPTIM2_CLK_SLEEP_DISABLE()        LL_APB1_GRP2_DisableClockSleep(LL_APB1_GRP2_PERIPH_LPTIM2)
 
 #define __HAL_RCC_C2TIM2_CLK_SLEEP_ENABLE()         LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_CLK_SLEEP_ENABLE()          LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_LCD)
+#endif
 #define __HAL_RCC_C2RTCAPB_CLK_SLEEP_ENABLE()       LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_RTCAPB)
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_CLK_SLEEP_ENABLE()         LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_C2I2C1_CLK_SLEEP_ENABLE()         LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_CLK_SLEEP_ENABLE()         LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_CLK_SLEEP_ENABLE()          LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_CLK_SLEEP_ENABLE()          LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_C2LPTIM1_CLK_SLEEP_ENABLE()       LL_C2_APB1_GRP1_EnableClockSleep(LL_C2_APB1_GRP1_PERIPH_LPTIM1)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_CLK_SLEEP_ENABLE()      LL_C2_APB1_GRP2_EnableClockSleep(LL_C2_APB1_GRP2_PERIPH_LPUART1)
+#endif
 #define __HAL_RCC_C2LPTIM2_CLK_SLEEP_ENABLE()       LL_C2_APB1_GRP2_EnableClockSleep(LL_C2_APB1_GRP2_PERIPH_LPTIM2)
 
 #define __HAL_RCC_C2TIM2_CLK_SLEEP_DISABLE()        LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_TIM2)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_CLK_SLEEP_DISABLE()         LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_LCD)
+#endif
 #define __HAL_RCC_C2RTCAPB_CLK_SLEEP_DISABLE()      LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_RTCAPB)
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_CLK_SLEEP_DISABLE()        LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_SPI2)
+#endif
 #define __HAL_RCC_C2I2C1_CLK_SLEEP_DISABLE()        LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_I2C1)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_CLK_SLEEP_DISABLE()        LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_I2C3)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_CLK_SLEEP_DISABLE()         LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_CRS)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_CLK_SLEEP_DISABLE()         LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_USB)
+#endif
 #define __HAL_RCC_C2LPTIM1_CLK_SLEEP_DISABLE()      LL_C2_APB1_GRP1_DisableClockSleep(LL_C2_APB1_GRP1_PERIPH_LPTIM1)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_CLK_SLEEP_DISABLE()     LL_C2_APB1_GRP2_DisableClockSleep(LL_C2_APB1_GRP2_PERIPH_LPUART1)
+#endif
 #define __HAL_RCC_C2LPTIM2_CLK_SLEEP_DISABLE()      LL_C2_APB1_GRP2_DisableClockSleep(LL_C2_APB1_GRP2_PERIPH_LPTIM2)
 
 /**
@@ -1764,28 +2108,36 @@ typedef struct
 #define __HAL_RCC_USART1_CLK_SLEEP_ENABLE()         LL_APB2_GRP1_EnableClockSleep(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_CLK_SLEEP_ENABLE()          LL_APB2_GRP1_EnableClockSleep(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_CLK_SLEEP_ENABLE()          LL_APB2_GRP1_EnableClockSleep(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_CLK_SLEEP_ENABLE()           LL_APB2_GRP1_EnableClockSleep(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_TIM1_CLK_SLEEP_DISABLE()          LL_APB2_GRP1_DisableClockSleep(LL_APB2_GRP1_PERIPH_TIM1)
 #define __HAL_RCC_SPI1_CLK_SLEEP_DISABLE()          LL_APB2_GRP1_DisableClockSleep(LL_APB2_GRP1_PERIPH_SPI1)
 #define __HAL_RCC_USART1_CLK_SLEEP_DISABLE()        LL_APB2_GRP1_DisableClockSleep(LL_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_TIM16_CLK_SLEEP_DISABLE()         LL_APB2_GRP1_DisableClockSleep(LL_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_TIM17_CLK_SLEEP_DISABLE()         LL_APB2_GRP1_DisableClockSleep(LL_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_CLK_SLEEP_DISABLE()          LL_APB2_GRP1_DisableClockSleep(LL_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_C2TIM1_CLK_SLEEP_ENABLE()         LL_C2_APB2_GRP1_EnableClockSleep(LL_C2_APB2_GRP1_PERIPH_TIM1)
 #define __HAL_RCC_C2SPI1_CLK_SLEEP_ENABLE()         LL_C2_APB2_GRP1_EnableClockSleep(LL_C2_APB2_GRP1_PERIPH_SPI1)
 #define __HAL_RCC_C2USART1_CLK_SLEEP_ENABLE()       LL_C2_APB2_GRP1_EnableClockSleep(LL_C2_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_C2TIM16_CLK_SLEEP_ENABLE()        LL_C2_APB2_GRP1_EnableClockSleep(LL_C2_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_C2TIM17_CLK_SLEEP_ENABLE()        LL_C2_APB2_GRP1_EnableClockSleep(LL_C2_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_CLK_SLEEP_ENABLE()         LL_C2_APB2_GRP1_EnableClockSleep(LL_C2_APB2_GRP1_PERIPH_SAI1)
+#endif
 
 #define __HAL_RCC_C2TIM1_CLK_SLEEP_DISABLE()        LL_C2_APB2_GRP1_DisableClockSleep(LL_C2_APB2_GRP1_PERIPH_TIM1)
 #define __HAL_RCC_C2SPI1_CLK_SLEEP_DISABLE()        LL_C2_APB2_GRP1_DisableClockSleep(LL_C2_APB2_GRP1_PERIPH_SPI1)
 #define __HAL_RCC_C2USART1_CLK_SLEEP_DISABLE()      LL_C2_APB2_GRP1_DisableClockSleep(LL_C2_APB2_GRP1_PERIPH_USART1)
 #define __HAL_RCC_C2TIM16_CLK_SLEEP_DISABLE()       LL_C2_APB2_GRP1_DisableClockSleep(LL_C2_APB2_GRP1_PERIPH_TIM16)
 #define __HAL_RCC_C2TIM17_CLK_SLEEP_DISABLE()       LL_C2_APB2_GRP1_DisableClockSleep(LL_C2_APB2_GRP1_PERIPH_TIM17)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_CLK_SLEEP_DISABLE()        LL_C2_APB2_GRP1_DisableClockSleep(LL_C2_APB2_GRP1_PERIPH_SAI1)
+#endif
 /**
   * @}
   */
@@ -1799,32 +2151,48 @@ typedef struct
   * @{
   */
 #define __HAL_RCC_DMA1_IS_CLK_SLEEP_ENABLED()       (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_DMA1SMEN) != RESET)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_IS_CLK_SLEEP_ENABLED()       (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_DMA2SMEN) != RESET)
+#endif
 #define __HAL_RCC_DMAMUX1_IS_CLK_SLEEP_ENABLED()    (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_DMAMUX1SMEN) != RESET)
 #define __HAL_RCC_SRAM1_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_SRAM1SMEN) != RESET)
 #define __HAL_RCC_CRC_IS_CLK_SLEEP_ENABLED()        (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_CRCSMEN) != RESET)
+#if defined(TSC)
 #define __HAL_RCC_TSC_IS_CLK_SLEEP_ENABLED()        (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_TSCSMEN) != RESET)
+#endif
 
 #define __HAL_RCC_DMA1_IS_CLK_SLEEP_DISABLED()      (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_DMA1SMEN) == RESET)
+#if defined(DMA2)
 #define __HAL_RCC_DMA2_IS_CLK_SLEEP_DISABLED()      (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_DMA2SMEN) == RESET)
+#endif
 #define __HAL_RCC_DMAMUX1_IS_CLK_SLEEP_DISABLED()   (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_DMAMUX1SMEN) == RESET)
 #define __HAL_RCC_SRAM1_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_SRAM1SMEN) == RESET)
 #define __HAL_RCC_CRC_IS_CLK_SLEEP_DISABLED()       (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_CRCSMEN) == RESET)
+#if defined(TSC)
 #define __HAL_RCC_TSC_IS_CLK_SLEEP_DISABLED()       (READ_BIT(RCC->AHB1SMENR, RCC_AHB1SMENR_TSCSMEN) == RESET)
+#endif
 
 #define __HAL_RCC_C2DMA1_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_DMA1SMEN) != RESET)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_DMA2SMEN) != RESET)
+#endif
 #define __HAL_RCC_C2DMAMUX1_IS_CLK_SLEEP_ENABLED()  (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_DMAMUX1SMEN) != RESET)
 #define __HAL_RCC_C2SRAM1_IS_CLK_SLEEP_ENABLED()    (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_SRAM1SMEN) != RESET)
 #define __HAL_RCC_C2CRC_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_CRCSMEN) != RESET)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_TSCSMEN) != RESET)
+#endif
 
 #define __HAL_RCC_C2DMA1_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_DMA1SMEN) == RESET)
+#if defined(DMA2)
 #define __HAL_RCC_C2DMA2_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_DMA2SMEN) == RESET)
+#endif
 #define __HAL_RCC_C2DMAMUX1_IS_CLK_SLEEP_DISABLED() (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_DMAMUX1SMEN) == RESET)
 #define __HAL_RCC_C2SRAM1_IS_CLK_SLEEP_DISABLED()   (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_SRAM1SMEN) == RESET)
 #define __HAL_RCC_C2CRC_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_CRCSMEN) == RESET)
+#if defined(TSC)
 #define __HAL_RCC_C2TSC_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->C2AHB1SMENR, RCC_C2AHB1SMENR_TSCSMEN) == RESET)
+#endif
 /**
   * @}
   */
@@ -1840,38 +2208,54 @@ typedef struct
 #define __HAL_RCC_GPIOA_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOASMEN) != RESET)
 #define __HAL_RCC_GPIOB_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOBSMEN) != RESET)
 #define __HAL_RCC_GPIOC_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOCSMEN) != RESET)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIODSMEN) != RESET)
+#endif
 #define __HAL_RCC_GPIOE_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOESMEN) != RESET)
 #define __HAL_RCC_GPIOH_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOHSMEN) != RESET)
 #define __HAL_RCC_ADC_IS_CLK_SLEEP_ENABLED()       (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_ADCSMEN)   != RESET)
+#if defined(AES1)
 #define __HAL_RCC_AES1_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_AES1SMEN) != RESET)
+#endif
 
 #define __HAL_RCC_GPIOA_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOASMEN) == RESET)
 #define __HAL_RCC_GPIOB_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOBSMEN) == RESET)
 #define __HAL_RCC_GPIOC_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOCSMEN) == RESET)
+#if defined(GPIOD)
 #define __HAL_RCC_GPIOD_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIODSMEN) == RESET)
+#endif
 #define __HAL_RCC_GPIOE_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOESMEN) == RESET)
 #define __HAL_RCC_GPIOH_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_GPIOHSMEN) == RESET)
 #define __HAL_RCC_ADC_IS_CLK_SLEEP_DISABLED()       (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_ADCSMEN)   == RESET)
+#if defined(AES1)
 #define __HAL_RCC_AES1_IS_CLK_SLEEP_DISABLED()      (READ_BIT(RCC->AHB2SMENR, RCC_AHB2SMENR_AES1SMEN) == RESET)
+#endif
 
 #define __HAL_RCC_C2GPIOA_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOASMEN) != RESET)
 #define __HAL_RCC_C2GPIOB_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOBSMEN) != RESET)
 #define __HAL_RCC_C2GPIOC_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOCSMEN) != RESET)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIODSMEN) != RESET)
+#endif
 #define __HAL_RCC_C2GPIOE_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOESMEN) != RESET)
 #define __HAL_RCC_C2GPIOH_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOHSMEN) != RESET)
 #define __HAL_RCC_C2ADC_IS_CLK_SLEEP_ENABLED()       (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_ADCSMEN)   != RESET)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_AES1SMEN) != RESET)
+#endif
 
 #define __HAL_RCC_C2GPIOA_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOASMEN) == RESET)
 #define __HAL_RCC_C2GPIOB_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOBSMEN) == RESET)
 #define __HAL_RCC_C2GPIOC_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOCSMEN) == RESET)
+#if defined(GPIOD)
 #define __HAL_RCC_C2GPIOD_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIODSMEN) == RESET)
+#endif
 #define __HAL_RCC_C2GPIOE_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOESMEN) == RESET)
 #define __HAL_RCC_C2GPIOH_IS_CLK_SLEEP_DISABLED()    (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_GPIOHSMEN) == RESET)
 #define __HAL_RCC_C2ADC_IS_CLK_SLEEP_DISABLED()      (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_ADCSMEN)   == RESET)
+#if defined(AES1)
 #define __HAL_RCC_C2AES1_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->C2AHB2SMENR, RCC_C2AHB2SMENR_AES1SMEN) == RESET)
+#endif
 /**
   * @}
   */
@@ -1884,14 +2268,18 @@ typedef struct
   * @note   By default, all peripheral clocks are enabled during SLEEP mode.
   * @{
   */
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_IS_CLK_SLEEP_ENABLED()   (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_QUADSPISMEN) != RESET)
+#endif
 #define __HAL_RCC_PKA_IS_CLK_SLEEP_ENABLED()       (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_PKASMEN) != RESET)
 #define __HAL_RCC_AES2_IS_CLK_SLEEP_ENABLED()      (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_AES2SMEN) != RESET)
 #define __HAL_RCC_RNG_IS_CLK_SLEEP_ENABLED()       (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_RNGSMEN) != RESET)
 #define __HAL_RCC_SRAM2_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_SRAM2SMEN) != RESET)
 #define __HAL_RCC_FLASH_IS_CLK_SLEEP_ENABLED()     (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_FLASHSMEN) != RESET)
 
+#if defined(QUADSPI)
 #define __HAL_RCC_QUADSPI_IS_CLK_SLEEP_DISABLED()  (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_QUADSPISMEN) == RESET)
+#endif
 #define __HAL_RCC_PKA_IS_CLK_SLEEP_DISABLED()      (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_PKASMEN) == RESET)
 #define __HAL_RCC_AES2_IS_CLK_SLEEP_DISABLED()     (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_AES2SMEN) == RESET)
 #define __HAL_RCC_RNG_IS_CLK_SLEEP_DISABLED()      (READ_BIT(RCC->AHB3SMENR, RCC_AHB3SMENR_RNGSMEN) == RESET)
@@ -1923,57 +2311,101 @@ typedef struct
   * @{
   */
 #define __HAL_RCC_TIM2_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_TIM2SMEN) != RESET)
+#if defined(LCD)
 #define __HAL_RCC_LCD_IS_CLK_SLEEP_ENABLED()            (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_LCDSMEN)  != RESET)
+#endif
 #define __HAL_RCC_RTCAPB_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_RTCAPBSMEN)  != RESET)
 #define __HAL_RCC_WWDG_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_WWDGSMEN)  != RESET)
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_SPI2SMEN) != RESET)
+#endif
 #define __HAL_RCC_I2C1_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_I2C1SMEN) != RESET)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_I2C3SMEN) != RESET)
+#endif
 #if defined(CRS)
 #define __HAL_RCC_CRS_IS_CLK_SLEEP_ENABLED()            (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_CRSSMEN)  != RESET)
-#endif /* CRS */
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_IS_CLK_SLEEP_ENABLED()            (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_USBSMEN)  != RESET)
+#endif
 #define __HAL_RCC_LPTIM1_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_LPTIM1SMEN) != RESET)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_IS_CLK_SLEEP_ENABLED()        (READ_BIT(RCC->APB1SMENR2, RCC_APB1SMENR2_LPUART1SMEN) != RESET)
+#endif
 #define __HAL_RCC_LPTIM2_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->APB1SMENR2, RCC_APB1SMENR2_LPTIM2SMEN) != RESET)
 
 #define __HAL_RCC_TIM2_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_TIM2SMEN) == RESET)
+#if defined(LCD)
 #define __HAL_RCC_LCD_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_LCDSMEN)  == RESET)
+#endif
 #define __HAL_RCC_RTCAPB_IS_CLK_SLEEP_DISABLED()        (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_RTCAPBSMEN)  == RESET)
 #define __HAL_RCC_WWDG_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_WWDGSMEN)  == RESET)
+#if defined(SPI2)
 #define __HAL_RCC_SPI2_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_SPI2SMEN) == RESET)
+#endif
 #define __HAL_RCC_I2C1_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_I2C1SMEN) == RESET)
+#if defined(I2C3)
 #define __HAL_RCC_I2C3_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_I2C3SMEN) == RESET)
+#endif
 #if defined(CRS)
 #define __HAL_RCC_CRS_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_CRSSMEN)  == RESET)
-#endif /* CRS */
+#endif
+#if defined(USB)
 #define __HAL_RCC_USB_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_USBSMEN)  == RESET)
+#endif
 #define __HAL_RCC_LPTIM1_IS_CLK_SLEEP_DISABLED()        (READ_BIT(RCC->APB1SMENR1, RCC_APB1SMENR1_LPTIM1SMEN) == RESET)
+#if defined(LPUART1)
 #define __HAL_RCC_LPUART1_IS_CLK_SLEEP_DISABLED()       (READ_BIT(RCC->APB1SMENR2, RCC_APB1SMENR2_LPUART1SMEN) == RESET)
+#endif
 #define __HAL_RCC_LPTIM2_IS_CLK_SLEEP_DISABLED()        (READ_BIT(RCC->APB1SMENR2, RCC_APB1SMENR2_LPTIM2SMEN) == RESET)
 
 #define __HAL_RCC_C2TIM2_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_TIM2SMEN) != RESET)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_IS_CLK_SLEEP_ENABLED()            (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_LCDSMEN)  != RESET)
+#endif
 #define __HAL_RCC_C2RTCAPB_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_RTCAPBSMEN)  != RESET)
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_SPI2SMEN) != RESET)
+#endif
 #define __HAL_RCC_C2I2C1_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_I2C1SMEN) != RESET)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_I2C3SMEN) != RESET)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_IS_CLK_SLEEP_ENABLED()            (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_CRSSMEN)  != RESET)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_IS_CLK_SLEEP_ENABLED()            (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_USBSMEN)  != RESET)
+#endif
 #define __HAL_RCC_C2LPTIM1_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_LPTIM1SMEN) != RESET)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_IS_CLK_SLEEP_ENABLED()        (READ_BIT(RCC->C2APB1SMENR2, RCC_C2APB1SMENR2_LPUART1SMEN) != RESET)
+#endif
 #define __HAL_RCC_C2LPTIM2_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->C2APB1SMENR2, RCC_C2APB1SMENR2_LPTIM2SMEN) != RESET)
 
 #define __HAL_RCC_C2TIM2_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_TIM2SMEN) == RESET)
+#if defined(LCD)
 #define __HAL_RCC_C2LCD_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_LCDSMEN)  == RESET)
+#endif
 #define __HAL_RCC_C2RTCAPB_IS_CLK_SLEEP_DISABLED()        (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_RTCAPBSMEN)  == RESET)
+#if defined(SPI2)
 #define __HAL_RCC_C2SPI2_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_SPI2SMEN) == RESET)
+#endif
 #define __HAL_RCC_C2I2C1_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_I2C1SMEN) == RESET)
+#if defined(I2C3)
 #define __HAL_RCC_C2I2C3_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_I2C3SMEN) == RESET)
+#endif
+#if defined(CRS)
 #define __HAL_RCC_C2CRS_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_CRSSMEN)  == RESET)
+#endif
+#if defined(USB)
 #define __HAL_RCC_C2USB_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_USBSMEN)  == RESET)
+#endif
 #define __HAL_RCC_C2LPTIM1_IS_CLK_SLEEP_DISABLED()        (READ_BIT(RCC->C2APB1SMENR1, RCC_C2APB1SMENR1_LPTIM1SMEN) == RESET)
+#if defined(LPUART1)
 #define __HAL_RCC_C2LPUART1_IS_CLK_SLEEP_DISABLED()       (READ_BIT(RCC->C2APB1SMENR2, RCC_C2APB1SMENR2_LPUART1SMEN) == RESET)
+#endif
 #define __HAL_RCC_C2LPTIM2_IS_CLK_SLEEP_DISABLED()        (READ_BIT(RCC->C2APB1SMENR2, RCC_C2APB1SMENR2_LPTIM2SMEN) == RESET)
 /**
   * @}
@@ -1992,28 +2424,36 @@ typedef struct
 #define __HAL_RCC_USART1_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_USART1SMEN) != RESET)
 #define __HAL_RCC_TIM16_IS_CLK_SLEEP_ENABLED()          (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_TIM16SMEN) != RESET)
 #define __HAL_RCC_TIM17_IS_CLK_SLEEP_ENABLED()          (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_TIM17SMEN) != RESET)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_SAI1SMEN) != RESET)
+#endif
 
 #define __HAL_RCC_TIM1_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_TIM1SMEN) == RESET)
 #define __HAL_RCC_SPI1_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_SPI1SMEN) == RESET)
 #define __HAL_RCC_USART1_IS_CLK_SLEEP_DISABLED()         (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_USART1SMEN) == RESET)
 #define __HAL_RCC_TIM16_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_TIM16SMEN) == RESET)
 #define __HAL_RCC_TIM17_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_TIM17SMEN) == RESET)
+#if defined(SAI1)
 #define __HAL_RCC_SAI1_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->APB2SMENR, RCC_APB2SMENR_SAI1SMEN) == RESET)
+#endif
 
 #define __HAL_RCC_C2TIM1_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_TIM1SMEN) != RESET)
 #define __HAL_RCC_C2SPI1_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_SPI1SMEN) != RESET)
 #define __HAL_RCC_C2USART1_IS_CLK_SLEEP_ENABLED()         (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_USART1SMEN) != RESET)
 #define __HAL_RCC_C2TIM16_IS_CLK_SLEEP_ENABLED()          (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_TIM16SMEN) != RESET)
 #define __HAL_RCC_C2TIM17_IS_CLK_SLEEP_ENABLED()          (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_TIM17SMEN) != RESET)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_IS_CLK_SLEEP_ENABLED()           (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_SAI1SMEN) != RESET)
+#endif
 
 #define __HAL_RCC_C2TIM1_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_TIM1SMEN) == RESET)
 #define __HAL_RCC_C2SPI1_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_SPI1SMEN) == RESET)
 #define __HAL_RCC_C2USART1_IS_CLK_SLEEP_DISABLED()         (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_USART1SMEN) == RESET)
 #define __HAL_RCC_C2TIM16_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_TIM16SMEN) == RESET)
 #define __HAL_RCC_C2TIM17_IS_CLK_SLEEP_DISABLED()          (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_TIM17SMEN) == RESET)
+#if defined(SAI1)
 #define __HAL_RCC_C2SAI1_IS_CLK_SLEEP_DISABLED()           (READ_BIT(RCC->C2APB2SMENR, RCC_C2APB2SMENR_SAI1SMEN) == RESET)
+#endif
 /**
   * @}
   */
@@ -2090,18 +2530,17 @@ typedef struct
 
 /** @brief  Macros to enable the Internal High Speed oscillator (HSI).
   * @note   The HSI is stopped by hardware when entering STOP, STANDBY or SHUTDOWN modes.
-  *         It is enabled by hardware ato force the HSI oscillator ON when STOPWUCK=1
+  *         It is enabled by hardware to force the HSI oscillator ON when STOPWUCK=1
   *         or HSIASFS = 1 when leaving Stop modes, or in case of failure of the HSE
   *         crystal oscillator and Security System CSS is enabled.
   * @note   After enabling the HSI, the application software should wait on HSIRDY
   *         flag to be set indicating that HSI clock is stable and can be used as
   *         system clock source.
-  *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
 #define __HAL_RCC_HSI_ENABLE()  LL_RCC_HSI_Enable()
 
-/** @brief  Macros to disable the Internal High Speed oscillator (HSI).
+/** @brief  Macro to disable the Internal High Speed oscillator (HSI).
   * @note   HSI can not be stopped if it is used as system clock source. In this case,
   *         you have to select another source of the system clock then stop the HSI.
   * @note   When the HSI is stopped, HSIRDY flag goes low after 6 HSI oscillator
@@ -2136,7 +2575,6 @@ typedef struct
   * @note     Keeping the HSI ON in STOP mode allows to avoid slowing down the communication
   *           speed because of the HSI startup time.
   * @note     The enable of this function has not effect on the HSION bit.
-  *           This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
 #define __HAL_RCC_HSISTOP_ENABLE()     LL_RCC_HSI_EnableInStopMode()
@@ -2162,7 +2600,7 @@ typedef struct
 #define __HAL_RCC_MSI_ENABLE()  LL_RCC_MSI_Enable()
 #define __HAL_RCC_MSI_DISABLE() LL_RCC_MSI_Disable()
 
-/** @brief  Macro Adjusts the Internal Multi Speed oscillator (MSI) calibration value.
+/** @brief  Macro to adjust the Internal Multi Speed oscillator (MSI) calibration value.
   * @note   The calibration is used to compensate for the variations in voltage
   *         and temperature that influence the frequency of the internal MSI RC.
   *         Refer to the Application Note AN3300 for more details on how to
@@ -2269,9 +2707,11 @@ typedef struct
   *            @arg @ref RCC_HSE_OFF  Turn OFF the HSE oscillator, HSERDY flag goes low after
   *                              6 HSE oscillator clock cycles.
   *            @arg @ref RCC_HSE_ON  Turn ON the HSE oscillator.
-  *            @arg @ref RCC_HSE_BYPASS  HSE oscillator bypassed with external clock.
+  *            @arg @ref RCC_HSE_BYPASS  HSE oscillator bypassed with external clock. (*)
+  * @note      (*) Value not defined for all devices
   * @retval None
   */
+#if defined(RCC_CR_HSEBYP)
 #define __HAL_RCC_HSE_CONFIG(__STATE__)                      \
                     do {                                     \
                       if((__STATE__) == RCC_HSE_ON)          \
@@ -2289,6 +2729,19 @@ typedef struct
                         LL_RCC_HSE_DisableBypass();          \
                       }                                      \
                     } while(0U)
+#else
+#define __HAL_RCC_HSE_CONFIG(__STATE__)                      \
+                    do {                                     \
+                      if((__STATE__) == RCC_HSE_ON)          \
+                      {                                      \
+                       LL_RCC_HSE_Enable();                  \
+                      }                                      \
+                      else                                   \
+                      {                                      \
+                        LL_RCC_HSE_Disable();                \
+                      }                                      \
+                    } while(0U)
+#endif
 
 /** @brief  Macros to enable or disable the HSE Prescaler
   * @note   HSE div2 could be used as Sysclk or PLL entry in Range2
@@ -2388,6 +2841,12 @@ typedef struct
 
 
 /** @brief  Macros to configure the RTC clock (RTCCLK).
+  * @param  __RTC_CLKSOURCE__  specifies the RTC clock source.
+  *         This parameter can be one of the following values:
+  *            @arg @ref RCC_RTCCLKSOURCE_NONE  none clock selected as RTC clock.
+  *            @arg @ref RCC_RTCCLKSOURCE_LSE  LSE selected as RTC clock.
+  *            @arg @ref RCC_RTCCLKSOURCE_LSI  LSI selected as RTC clock.
+  *            @arg @ref RCC_RTCCLKSOURCE_HSE_DIV32  HSE clock divided by 32 selected
   * @note   As the RTC clock configuration bits are in the Backup domain and write
   *         access is denied to this domain after reset, you have to enable write
   *         access using the Power Backup Access macro before to configure
@@ -2395,14 +2854,6 @@ typedef struct
   * @note   Once the RTC clock is configured it cannot be changed unless the
   *         Backup domain is reset using @ref __HAL_RCC_BACKUPRESET_FORCE() macro, or by
   *         a Power On Reset (POR).
-  *
-  * @param  __RTC_CLKSOURCE__  specifies the RTC clock source.
-  *         This parameter can be one of the following values:*
-  *            @arg @ref RCC_RTCCLKSOURCE_NONE  none clock selected as RTC clock.
-  *            @arg @ref RCC_RTCCLKSOURCE_LSE  LSE selected as RTC clock.
-  *            @arg @ref RCC_RTCCLKSOURCE_LSI  LSI selected as RTC clock.
-  *            @arg @ref RCC_RTCCLKSOURCE_HSE_DIV32  HSE clock divided by 32 selected
-  *
   * @note   If the LSE or LSI is used as RTC clock source, the RTC continues to
   *         work in STOP and STANDBY modes, and can be used as wakeup source.
   *         However, when the HSE clock is used as RTC clock source, the RTC
@@ -2435,13 +2886,13 @@ typedef struct
 #define __HAL_RCC_PLL_DISABLE()        LL_RCC_PLL_Disable()
 
 /** @brief  Macro to configure the PLL clock source.
-  * @note   This function must be used only when the main PLL is disabled.
   * @param  __PLLSOURCE__  specifies the PLL entry clock source.
   *         This parameter can be one of the following values:
   *            @arg @ref RCC_PLLSOURCE_NONE  No clock selected as PLL clock entry
   *            @arg @ref RCC_PLLSOURCE_MSI  MSI oscillator clock selected as PLL clock entry
   *            @arg @ref RCC_PLLSOURCE_HSI  HSI oscillator clock selected as PLL clock entry
   *            @arg @ref RCC_PLLSOURCE_HSE  HSE oscillator clock selected as PLL clock entry
+  * @note   This function must be used only when the main PLL is disabled.
   * @note   This clock source is common for the main PLL and audio PLL (PLL and PLLSAI1).
   * @retval None
   *
@@ -2452,7 +2903,7 @@ typedef struct
 /** @brief  Macro to configure the PLL multiplication factor.
   * @note   This function must be used only when the main PLL is disabled.
   * @param  __PLLM__  specifies the division factor for PLL VCO input clock
-  *         This parameter must be a value of RCC_PLLM_Clock_Divider.
+  *         This parameter must be a value of @ref RCC_PLLM_Clock_Divider.
   * @note   You have to set the PLLM parameter correctly to ensure that the VCO input
   *         frequency ranges from 4 to 16 MHz. It is recommended to select a frequency
   *         of 16 MHz to limit PLL jitter.
@@ -2475,15 +2926,15 @@ typedef struct
   * @note   This clock source is common for the main PLL and audio PLL (PLL and PLLSAI1).
   *
   * @param  __PLLM__  specifies the division factor for PLL VCO input clock.
-  *         This parameter must be a value of RCC_PLLM_Clock_Divider.
+  *         This parameter must be a value of @ref RCC_PLLM_Clock_Divider.
   * @note   You have to set the PLLM parameter correctly to ensure that the VCO input
-  *         frequency ranges from 4 to 16 MHz. It is recommended to select a frequency
+  *         frequency ranges from 2.66 to 16 MHz. It is recommended to select a frequency
   *         of 16 MHz to limit PLL jitter.
   *
   * @param  __PLLN__  specifies the multiplication factor for PLL VCO output clock.
-  *         This parameter must be a number between 8 and 86.
+  *         This parameter must be a number between 6 and 127.
   * @note   You have to set the PLLN parameter correctly to ensure that the VCO
-  *         output frequency is between 64 and 344 MHz.
+  *         output frequency is between 96 and 344 MHz.
   *
   * @param  __PLLP__  specifies the division factor for ADC and SAI1 clock.
   *         This parameter must be a value of @ref RCC_PLLP_Clock_Divider.
@@ -2496,8 +2947,8 @@ typedef struct
   *         correctly.
   *
   * @param  __PLLR__  specifies the division factor for the main system clock.
-  *         This parameter must be a value of RCC_PLLR_Clock_Divider
-  * @note   You have to set the PLLR parameter correctly to not exceed 64MHZ.
+  *         This parameter must be a value of @ref RCC_PLLR_Clock_Divider
+  * @note   You have to set the PLLR parameter correctly to not exceed 48 MHZ.
   * @retval None
   */
 #define __HAL_RCC_PLL_CONFIG(__PLLSOURCE__, __PLLM__, __PLLN__, __PLLP__, __PLLQ__,__PLLR__ ) \
@@ -2537,6 +2988,7 @@ typedef struct
   *            @arg @ref RCC_PLL_USBCLK  This Clock is used to generate the clock for the USB FS (48 MHz)
   *            @arg @ref RCC_PLL_RNGCLK  This clock is used to generate the clock for RNG
   *            @arg @ref RCC_PLL_SYSCLK  This Clock is used to generate the high speed system clock (up to 64MHz)
+  *            @arg @ref RCC_PLL_I2SCLK  This Clock is used to generate the clock for the I2S
   * @retval None
   */
 #define __HAL_RCC_PLLCLKOUT_ENABLE(__PLLCLOCKOUT__)   SET_BIT(RCC->PLLCFGR, (__PLLCLOCKOUT__))
